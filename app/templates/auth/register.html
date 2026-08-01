@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Register Student / Faculty - {{ app_name }}{% endblock %}
+
+{% block public_content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <div class="glass-card p-4 p-md-5 shadow-lg" style="border-radius: 20px;">
+        
+        <div class="text-center mb-4">
+          <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold mb-2">
+            <i class="bi bi-person-plus-fill me-1"></i> Academic Community Onboarding
+          </span>
+          <h3 class="fw-bolder">Create Your CampusHub Account</h3>
+          <p class="text-muted fs-7">Join your registered university workspace to book resources and manage academic activities</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.register') }}" class="mt-4">
+          {{ form.hidden_tag() }}
+          
+          <!-- Section 1: Role & Institution -->
+          <h6 class="fw-bold text-uppercase fs-7 text-primary mb-3 border-bottom pb-2"><i class="bi bi-buildings me-2"></i> 1. Institutional Alignment</h6>
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.role.label.text }}</label>
+              {{ form.role(class="form-select py-2 border-primary border-opacity-50 fw-medium") }}
+            </div>
+            <div class="col-md-8">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.college_id.label.text }}</label>
+              {{ form.college_id(class="form-select py-2 fw-medium") }}
+            </div>
+          </div>
+
+          <!-- Section 2: Personal details -->
+          <h6 class="fw-bold text-uppercase fs-7 text-primary mb-3 border-bottom pb-2"><i class="bi bi-person-badge me-2"></i> 2. Personal & Academic Credentials</h6>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.first_name.label.text }}</label>
+              {{ form.first_name(class="form-control py-2", placeholder="e.g. Vikram") }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.last_name.label.text }}</label>
+              {{ form.last_name(class="form-control py-2", placeholder="e.g. Verma") }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.email.label.text }}</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light text-muted"><i class="bi bi-envelope"></i></span>
+                {{ form.email(class="form-control py-2", placeholder="student@iitd.ac.in") }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.phone.label.text }}</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light text-muted"><i class="bi bi-telephone"></i></span>
+                {{ form.phone(class="form-control py-2", placeholder="+91 9876543210") }}
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.identifier_number.label.text }}</label>
+              {{ form.identifier_number(class="form-control py-2 text-uppercase", placeholder="IITD/2026/MCA050") }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.course_or_designation.label.text }}</label>
+              {{ form.course_or_designation(class="form-control py-2", placeholder="MCA / Assistant Professor") }}
+            </div>
+          </div>
+
+          <!-- Section 3: Password -->
+          <h6 class="fw-bold text-uppercase fs-7 text-primary mb-3 border-bottom pb-2"><i class="bi bi-lock me-2"></i> 3. Security Credentials</h6>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.password.label.text }}</label>
+              {{ form.password(class="form-control py-2", placeholder="Minimum 6 characters") }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.confirm_password.label.text }}</label>
+              {{ form.confirm_password(class="form-control py-2", placeholder="Re-enter password") }}
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary-gradient w-100 py-3 fw-bold fs-6 shadow-md mt-2">
+            <i class="bi bi-person-check-fill me-2"></i> Complete Account Registration
+          </button>
+        </form>
+
+        <div class="text-center mt-4 pt-3 border-top border-secondary border-opacity-10 fs-7 text-muted">
+          Already registered? <a href="{{ url_for('auth.login') }}" class="text-primary fw-bold">Sign In Here</a>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

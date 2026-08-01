@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}Reserve Slot: {{ resource.name }} - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+  <div>
+    <h3 class="fw-bolder mb-1"><i class="bi bi-calendar2-check-fill text-primary me-2"></i> Resource Slot Authorization Wizard</h3>
+    <p class="text-muted fs-7 mb-0">Select your academic scheduling interval. Our backend conflict engine verifies time availability in real-time.</p>
+  </div>
+  <a href="{{ url_for('student.catalog') }}" class="btn btn-outline-secondary btn-sm px-3 fw-semibold">
+    <i class="bi bi-arrow-left me-1"></i> Return to Catalog
+  </a>
+</div>
+
+<div class="row g-5 mb-5">
+  <!-- Booking Form Column -->
+  <div class="col-lg-7">
+    <div class="glass-card p-4 p-md-5 shadow-lg h-100" style="border-radius: 20px;">
+      <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+        <div class="d-flex align-items-center justify-content-center text-white shadow-md" style="width: 50px; height: 50px; border-radius: 14px; background: linear-gradient(135deg, #6366f1, #0ea5e9);">
+          <i class="bi bi-clock-history fs-3"></i>
+        </div>
+        <div>
+          <h4 class="fw-bold mb-0 text-primary">Apply For Reservation</h4>
+          <small class="text-muted fs-7">Fill date & temporal range below</small>
+        </div>
+      </div>
+
+      <form method="POST" action="{{ url_for('student.book_resource', resource_id=resource.id) }}">
+        {{ form.hidden_tag() }}
+
+        <div class="row g-3 mb-4">
+          <div class="col-12">
+            <label class="form-label fw-semibold fs-7 text-muted">{{ form.booking_date.label.text }} <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-primary"><i class="bi bi-calendar-event-fill"></i></span>
+              {{ form.booking_date(class="form-control py-2 font-monospace fw-bold fs-6") }}
+            </div>
+            {% for err in form.booking_date.errors %}
+              <div class="text-danger fs-8 mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold fs-7 text-muted">{{ form.start_time.label.text }} <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-success"><i class="bi bi-play-circle-fill"></i></span>
+              {{ form.start_time(class="form-control py-2 font-monospace fw-bold fs-6") }}
+            </div>
+            {% for err in form.start_time.errors %}
+              <div class="text-danger fs-8 mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold fs-7 text-muted">{{ form.end_time.label.text }} <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light text-danger"><i class="bi bi-stop-circle-fill"></i></span>
+              {{ form.end_time(class="form-control py-2 font-monospace fw-bold fs-6") }}
+            </div>
+            {% for err in form.end_time.errors %}
+              <div class="text-danger fs-8 mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="col-12">
+            <label class="form-label fw-semibold fs-7 text-muted">{{ form.purpose.label.text }} <span class="text-danger">*</span></label>
+            {{ form.purpose(class="form-control py-2", rows="4", placeholder="e.g., Final semester AI model inference evaluation and testing under supervision of Prof. Sharma...") }}
+            {% for err in form.purpose.errors %}
+              <div class="text-danger fs-8 mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="alert alert-warning border-0 p-3 mb-4 rounded-3 fs-7 d-flex align-items-center" style="background: rgba(245, 158, 11, 0.12); color: var(--text-primary);">
+          <i class="bi bi-shield-lock-fill text-warning fs-4 me-3"></i>
+          <div>
+            <strong>Automated Zero-Collision Verification:</strong> If another student or faculty has already reserved this exact room during your proposed timeline, our engine will prevent collision and warn you immediately.
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary-gradient w-100 py-3 fw-bold fs-6 shadow-md">
+          <i class="bi bi-check2-circle me-2"></i> Submit Authorization Application
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Resource Specs & Existing Slots Sidebar -->
+  <div class="col-lg-5">
+    <!-- Resource Details Card -->
+    <div class="glass-card overflow-hidden mb-4 border-0 shadow-sm">
+      <div style="height: 180px; position: relative;">
+        <img src="{{ resource.image_url or 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=80' }}" alt="Asset Photo" class="w-100 h-100 object-fit-cover">
+        <span class="badge bg-primary position-absolute bottom-0 start-0 m-3 font-monospace">{{ resource.resource_type }}</span>
+      </div>
+      <div class="p-4">
+        <h4 class="fw-bold text-primary mb-2">{{ resource.name }}</h4>
+        <div class="d-flex align-items-center justify-content-between text-muted fs-7 mb-3">
+          <span><i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ resource.location }}</span>
+          <span class="badge bg-light text-dark border font-monospace">Capacity: {{ resource.capacity }}</span>
+        </div>
+        <p class="text-muted fs-7 mb-0">{{ resource.description or 'High-performance computing or presentation asset ready for deployment.' }}</p>
+      </div>
+    </div>
+
+    <!-- Live Occupancy & Existing Reservations Schedule -->
+    <div class="glass-card p-4">
+      <h5 class="fw-bold mb-3 pb-2 border-bottom"><i class="bi bi-calendar3 text-info me-2"></i> Existing Occupancy Schedule</h5>
+      <p class="text-muted fs-8 mb-3">Review the occupied slots below for this resource to select a vacant time window without interference:</p>
+      
+      <div class="d-flex flex-column gap-2" style="max-height: 280px; overflow-y: auto;">
+        {% if existing_slots %}
+          {% for slot in existing_slots %}
+          <div class="p-3 rounded-3 bg-light border d-flex justify-content-between align-items-center">
+            <div>
+              <span class="fw-bold text-dark d-block fs-7">{{ slot.booking_date.strftime('%b %d, %Y') }}</span>
+              <span class="font-monospace text-primary fw-bold fs-7">{{ slot.start_time.strftime('%I:%M %p') }} - {{ slot.end_time.strftime('%I:%M %p') }}</span>
+            </div>
+            <span class="badge {{ slot.status_badge }} px-2 py-1 text-uppercase fs-8">{{ slot.status }}</span>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-center py-4 text-muted bg-light rounded-3 border border-dashed">
+            <i class="bi bi-check-circle-fill text-success fs-3 d-block mb-1"></i>
+            <span class="fw-semibold fs-7">No upcoming occupancy conflicts! This resource is entirely vacant today and ahead.</span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

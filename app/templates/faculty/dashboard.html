@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Faculty Professor Dashboard - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+  <div>
+    <h3 class="fw-bolder mb-1"><i class="bi bi-person-video3 text-primary me-2"></i> Faculty Academic & Research Portal</h3>
+    <p class="text-muted fs-7 mb-0">Welcome back, <strong>Prof. {{ current_user.full_name }}</strong>! Campus: <span class="text-primary fw-bold font-monospace">{{ current_user.college.name }}</span></p>
+  </div>
+  <a href="{{ url_for('faculty.catalog') }}" class="btn btn-primary-gradient px-4 py-2 fw-bold shadow-sm">
+    <i class="bi bi-calendar-check me-2"></i> Reserve Lecture Facility
+  </a>
+</div>
+
+<!-- KPI Summary Cards -->
+<div class="row g-4 mb-5">
+  <div class="col-md-4">
+    <div class="glass-card stat-card h-100 border-start border-primary border-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-uppercase fw-bold fs-7 text-muted">Campus Facilities</span>
+        <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-building"></i></div>
+      </div>
+      <h2 class="fw-bolder display-6 mb-1 text-primary">{{ total_resources }}</h2>
+      <a href="{{ url_for('faculty.catalog') }}" class="fs-7 text-primary text-decoration-none fw-semibold">Inspect Lecture Halls & Equipment &rarr;</a>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="glass-card stat-card h-100 border-start border-info border-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-uppercase fw-bold fs-7 text-muted">Priority Requests Pending</span>
+        <div class="stat-icon bg-info bg-opacity-10 text-info"><i class="bi bi-hourglass-split"></i></div>
+      </div>
+      <h2 class="fw-bolder display-6 mb-1 text-info">{{ my_pending }}</h2>
+      <a href="{{ url_for('faculty.my_bookings') }}" class="fs-7 text-muted text-decoration-none">Review pending authorizations</a>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="glass-card stat-card h-100 border-start border-success border-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-uppercase fw-bold fs-7 text-muted">Confirmed Teaching Slots</span>
+        <div class="stat-icon bg-success bg-opacity-10 text-success"><i class="bi bi-calendar-check-fill"></i></div>
+      </div>
+      <h2 class="fw-bolder display-6 mb-1 text-success">{{ my_approved }}</h2>
+      <span class="text-success fs-7 fw-semibold">Ready for active lectures</span>
+    </div>
+  </div>
+</div>
+
+<!-- Upcoming Academic Teaching Schedule -->
+<div class="glass-card mb-5 overflow-hidden shadow-sm">
+  <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+    <h5 class="fw-bold mb-0"><i class="bi bi-calendar-week text-primary me-2"></i> Upcoming Teaching & Laboratory Schedule</h5>
+    <a href="{{ url_for('faculty.my_bookings') }}" class="text-primary text-decoration-none fw-bold fs-7">Full Reservation Record &rarr;</a>
+  </div>
+  <div class="table-responsive">
+    <table class="table-custom mb-0">
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Reserved Resource Asset</th>
+          <th>Scheduled Date</th>
+          <th>Lecture / Lab Duration</th>
+          <th>Authorization Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in my_schedule %}
+        <tr>
+          <td class="font-monospace fw-bold text-primary fs-7">#BKG-{{ b.id }}</td>
+          <td>
+            <div class="fw-bold text-dark">{{ b.resource.name }}</div>
+            <small class="text-muted fs-7"><i class="bi bi-geo-alt me-1"></i>{{ b.resource.location }}</small>
+          </td>
+          <td class="fw-semibold fs-7">{{ b.booking_date.strftime('%a, %b %d, %Y') }}</td>
+          <td class="font-monospace fs-7 text-dark fw-bold">{{ b.start_time.strftime('%I:%M %p') }} - {{ b.end_time.strftime('%I:%M %p') }}</td>
+          <td>
+            <span class="badge {{ b.status_badge }} px-3 py-1 text-uppercase">{{ b.status }}</span>
+            {% if b.admin_remark %}
+              <small class="d-block text-muted mt-1 fs-8 fst-italic">Note: {{ b.admin_remark }}</small>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="text-center py-5 text-muted">
+            <i class="bi bi-calendar2-x fs-1 d-block mb-2 text-secondary"></i>
+            No upcoming teaching lectures or equipment sessions scheduled. Select a facility from the catalog to book!
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Recommended Faculty Research & Seminar Resources -->
+<div class="mb-4">
+  <h5 class="fw-bold mb-3"><i class="bi bi-easel text-primary me-2"></i> Priority Lecture Theaters & Research Labs</h5>
+  <div class="row g-4">
+    {% for r in featured %}
+    <div class="col-md-4">
+      <div class="glass-card h-100 overflow-hidden d-flex flex-column justify-content-between border-0 shadow-sm">
+        <div>
+          <div style="height: 170px; position: relative;">
+            <img src="{{ r.image_url or 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500&auto=format&fit=crop&q=80' }}" alt="{{ r.name }}" class="w-100 h-100 object-fit-cover">
+            <span class="badge bg-primary position-absolute bottom-0 start-0 m-2 font-monospace fs-8">{{ r.resource_type }}</span>
+          </div>
+          <div class="p-3">
+            <h6 class="fw-bold text-primary mb-1">{{ r.name }}</h6>
+            <div class="fs-7 text-muted mb-2"><i class="bi bi-geo-alt text-danger me-1"></i> {{ r.location }} • Cap: {{ r.capacity }} delegates</div>
+            <p class="text-muted fs-8 mb-0">{{ r.description[:80] if r.description else 'Equipped for advanced faculty instruction.' }}...</p>
+          </div>
+        </div>
+        <div class="p-3 bg-light border-top text-end">
+          <a href="{{ url_for('faculty.book_resource', resource_id=r.id) }}" class="btn btn-primary-gradient btn-sm fw-bold px-3">
+            <i class="bi bi-calendar-check me-1"></i> Reserve Facility
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

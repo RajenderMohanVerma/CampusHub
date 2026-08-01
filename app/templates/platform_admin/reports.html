@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}HQ Platform Analytics - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="mb-4 pb-2 border-bottom">
+  <h3 class="fw-bolder mb-1"><i class="bi bi-bar-chart-line text-primary me-2"></i> Multi-Tenant Global Telemetry & Reports</h3>
+  <p class="text-muted fs-7 mb-0">Cross-institutional resource distribution and cumulative booking performance charts.</p>
+</div>
+
+<div class="row g-4 mb-5">
+  <!-- Chart 1: Resource distribution across colleges -->
+  <div class="col-lg-6">
+    <div class="glass-card p-4 h-100">
+      <h6 class="fw-bold text-uppercase fs-7 text-primary mb-3"><i class="bi bi-pie-chart-fill me-2"></i> Asset Ownership By Institution</h6>
+      <div style="position: relative; height: 320px;">
+        <canvas id="resourceDistributionChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart 2: Booking volume comparison -->
+  <div class="col-lg-6">
+    <div class="glass-card p-4 h-100">
+      <h6 class="fw-bold text-uppercase fs-7 text-success mb-3"><i class="bi bi-graph-up me-2"></i> Cumulative Reservation Volume per University</h6>
+      <div style="position: relative; height: 320px;">
+        <canvas id="bookingVolumeChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const labels = {{ labels|tojson }};
+  const resCounts = {{ res_counts|tojson }};
+  const bookCounts = {{ book_counts|tojson }};
+  
+  const textColor = document.documentElement.getAttribute('data-theme') === 'dark' ? '#e4e6ef' : '#181c32';
+  const gridColor = document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+
+  // Chart 1: Pie / Doughnut
+  new Chart(document.getElementById('resourceDistributionChart'), {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: resCounts,
+        backgroundColor: ['#6366f1', '#0ea5e9', '#10b981', '#f59e0b', '#ef4444'],
+        borderWidth: 2,
+        borderColor: 'transparent'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Outfit', weight: '600' } } }
+      }
+    }
+  });
+
+  // Chart 2: Bar chart
+  new Chart(document.getElementById('bookingVolumeChart'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Total Bookings',
+        data: bookCounts,
+        backgroundColor: 'rgba(14, 165, 233, 0.75)',
+        borderColor: '#0ea5e9',
+        borderWidth: 2,
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { ticks: { color: textColor }, grid: { display: false } },
+        y: { ticks: { color: textColor, stepSize: 1 }, grid: { color: gridColor }, beginAtZero: true }
+      },
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+});
+</script>
+{% endblock %}

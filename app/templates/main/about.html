@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}About CampusHub Platform - {{ app_name }}{% endblock %}
+
+{% block public_content %}
+<div class="container py-5 my-3">
+  <div class="row justify-content-center text-center mb-5">
+    <div class="col-lg-9">
+      <span class="badge badge-saas bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-3 py-2 mb-3 rounded-pill fs-7">
+        <i class="bi bi-buildings-fill me-1"></i> Our Vision & Software Architecture
+      </span>
+      <h1 class="fw-bolder display-5 mb-4">Empowering Multi-College Collaboration Through Strict Tenancy</h1>
+      <p class="text-muted lead">
+        CampusHub was birthed to dismantle the inefficiencies of legacy academic scheduling by offering an intuitive, cloud-native resource governance network.
+      </p>
+    </div>
+  </div>
+
+  <div class="row g-5 mb-5 align-items-center">
+    <div class="col-lg-6">
+      <div class="position-relative rounded-4 overflow-hidden shadow-lg border border-secondary border-opacity-25">
+        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1000&auto=format&fit=crop&q=80" alt="University Campus Lawn and Modern Engineering Architecture" class="w-100 object-fit-cover" style="height: 420px;">
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <h3 class="fw-bolder mb-3">The Multi-Tenant Workspace Paradigm</h3>
+      <p class="text-muted mb-4">
+        Traditional campus software forces organizations into monolithic structures or expensive standalone server maintenance. CampusHub solves this by embedding strict tenant separation directly into the relational Database Schema.
+      </p>
+      <div class="d-flex flex-column gap-3">
+        <div class="p-3 rounded-3 border d-flex align-items-center gap-3" style="background: var(--bg-card);">
+          <i class="bi bi-key-fill text-primary fs-3"></i>
+          <div>
+            <h6 class="fw-bold mb-1">Universal Tenant Column Rule</h6>
+            <p class="text-muted fs-7 mb-0">Every functional table (`Resources`, `Bookings`, `Departments`, `Faculty`, `Students`) mandatorily enforces a `college_id` foreign key identifier.</p>
+          </div>
+        </div>
+        <div class="p-3 rounded-3 border d-flex align-items-center gap-3" style="background: var(--bg-card);">
+          <i class="bi bi-funnel-fill text-success fs-3"></i>
+          <div>
+            <h6 class="fw-bold mb-1">Automated Request Filtering</h6>
+            <p class="text-muted fs-7 mb-0">All route controllers automatically filter records via `current_user.college_id`, insulating data between institutions like IIT Delhi and Stanford.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-5 rounded-4 my-5 border shadow-sm text-center" style="background: var(--bg-card);">
+    <h3 class="fw-bold mb-3">Designed For Professional Portfolio Assessment</h3>
+    <p class="text-muted max-w-600 mx-auto mb-4">
+      Constructed utilizing Python 3.12, Flask, SQLAlchemy 2.0, and modern SaaS CSS variables, CampusHub stands ready for immediate deployment and technical evaluation.
+    </p>
+    <a href="{{ url_for('main.contact') }}" class="btn btn-primary-gradient px-5 py-3 fw-bold">Connect With Lead Architect</a>
+  </div>
+</div>
+{% endblock %}

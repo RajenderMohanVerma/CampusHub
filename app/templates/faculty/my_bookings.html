@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Faculty Teaching & Reservation History - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+  <div>
+    <h3 class="fw-bolder mb-1"><i class="bi bi-calendar-check text-primary me-2"></i> My Teaching Schedule & Booking Records</h3>
+    <p class="text-muted fs-7 mb-0">Inspect real-time authorization statuses, administrative feedback notes, or release scheduled slots.</p>
+  </div>
+  <a href="{{ url_for('faculty.catalog') }}" class="btn btn-primary-gradient px-4 py-2 fw-bold shadow-sm">
+    <i class="bi bi-plus-circle me-1"></i> Book Another Facility
+  </a>
+</div>
+
+<div class="glass-card overflow-hidden shadow-sm">
+  <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+    <h5 class="fw-bold mb-0">Faculty Reservation Trajectory ({{ bookings_list|length }})</h5>
+    <div class="input-group" style="max-width: 280px;">
+      <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+      <input type="text" class="form-control border-start-0 py-1" id="tableSearchInput" placeholder="Filter asset or state...">
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table-custom mb-0">
+      <thead>
+        <tr>
+          <th>Reference ID</th>
+          <th>Reserved Resource Facility</th>
+          <th>Campus Location & Type</th>
+          <th>Scheduled Date & Duration</th>
+          <th>Academic Purpose</th>
+          <th>Status</th>
+          <th class="text-end">Controls</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in bookings_list %}
+        <tr>
+          <td class="font-monospace fw-bold text-primary fs-7">#BKG-{{ b.id }}</td>
+          <td>
+            <a href="{{ url_for('faculty.book_resource', resource_id=b.resource_id) }}" class="fw-bold text-primary text-decoration-none fs-6">{{ b.resource.name }}</a>
+          </td>
+          <td>
+            <div class="fs-7 text-muted"><i class="bi bi-geo-alt me-1"></i>{{ b.resource.location }}</div>
+            <span class="badge bg-light text-secondary border font-monospace fs-8">{{ b.resource.resource_type }}</span>
+          </td>
+          <td>
+            <div class="fw-bold text-dark fs-7">{{ b.booking_date.strftime('%a, %b %d, %Y') }}</div>
+            <span class="badge bg-dark text-white font-monospace">{{ b.start_time.strftime('%I:%M %p') }} - {{ b.end_time.strftime('%I:%M %p') }}</span>
+          </td>
+          <td>
+            <div class="fs-7 text-secondary" style="max-width: 260px;">{{ b.purpose }}</div>
+            {% if b.admin_remark %}
+              <div class="p-2 bg-light rounded-2 mt-1 border text-primary fs-8">
+                <strong><i class="bi bi-chat-quote-fill text-primary me-1"></i> Admin Note:</strong> {{ b.admin_remark }}
+              </div>
+            {% endif %}
+          </td>
+          <td>
+            <span class="badge {{ b.status_badge }} px-3 py-2 text-uppercase fw-bold">{{ b.status }}</span>
+          </td>
+          <td class="text-end">
+            {% if b.status in ['pending', 'approved'] %}
+            <form method="POST" action="{{ url_for('faculty.cancel_booking', booking_id=b.id) }}" onsubmit="return confirm('Cancel this faculty reservation? The facility will become vacant immediately.');" style="display:inline;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn btn-outline-danger btn-sm px-3 fw-bold" title="Revoke Slot">
+                <i class="bi bi-x-circle me-1"></i> Revoke
+              </button>
+            </form>
+            {% else %}
+              <span class="text-muted fs-8"><i class="bi bi-lock-fill me-1"></i> Finalized</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="7" class="text-center py-5 text-muted">
+            <i class="bi bi-calendar2-x fs-1 d-block mb-3 text-secondary"></i>
+            <h5 class="fw-bold">No Teaching Slots Reserved Yet</h5>
+            <p class="max-w-600 mx-auto">You have not submitted any lecture hall or research equipment bookings yet. Visit the catalog to make your first reservation!</p>
+            <a href="{{ url_for('faculty.catalog') }}" class="btn btn-primary-gradient px-4 py-2 mt-2 fw-bold">Browse Facilities Catalog</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

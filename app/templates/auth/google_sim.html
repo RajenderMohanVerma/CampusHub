@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Simulated Google OAuth - {{ app_name }}{% endblock %}
+
+{% block public_content %}
+<div class="container py-5 my-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="glass-card p-4 p-md-5 shadow-lg" style="border-radius: 20px;">
+        
+        <div class="text-center mb-4 pb-3 border-bottom border-secondary border-opacity-25">
+          <div class="d-inline-flex align-items-center justify-content-center mb-3 p-3 bg-white rounded-circle shadow-sm">
+            <i class="bi bi-google text-danger fs-2"></i>
+          </div>
+          <h4 class="fw-bolder">Sign in with Google Account</h4>
+          <p class="text-muted fs-7 mb-0">CampusHub OAuth 2.0 Identity Provider Simulation</p>
+        </div>
+
+        <p class="text-muted fs-7 text-center mb-4">
+          Select an academic identity below to complete OAuth token exchange and authenticate into your tenant workspace:
+        </p>
+
+        <form method="POST" action="{{ url_for('auth.google_simulate') }}">
+          <div class="list-group list-group-flush gap-3 mb-4">
+            {% for u in users %}
+            <label class="list-group-item list-group-item-action d-flex align-items-center p-3 rounded-4 border shadow-sm cursor-pointer glass-card" style="background: var(--bg-card);">
+              <input class="form-check-input me-3 fs-5" type="radio" name="user_id" value="{{ u.id }}" required {% if loop.first %}checked{% endif %}>
+              <div class="d-flex align-items-center justify-content-center text-white fw-bold me-3" style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #f59e0b, #ef4444);">
+                {{ u.first_name[:1] }}{{ u.last_name[:1] }}
+              </div>
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h6 class="fw-bold mb-0">{{ u.full_name }}</h6>
+                  <span class="badge badge-saas bg-primary bg-opacity-10 text-primary text-uppercase">{{ u.role.replace('_', ' ') }}</span>
+                </div>
+                <small class="text-muted">{{ u.email }}</small>
+              </div>
+            </label>
+            {% endfor %}
+          </div>
+
+          <div class="d-flex gap-3">
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary py-2 px-4 w-50 fw-semibold">Cancel</a>
+            <button type="submit" class="btn btn-primary-gradient py-2 px-4 w-50 fw-bold">
+              <i class="bi bi-check2-circle me-1"></i> Authorize & Connect
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

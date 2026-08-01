@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Manage Campus Bookings - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom gap-3">
+  <div>
+    <h3 class="fw-bolder mb-1"><i class="bi bi-calendar2-check-fill text-primary me-2"></i> Tenant Resource Reservations</h3>
+    <p class="text-muted fs-7 mb-0">Review student and faculty booking applications. Approve conflict-free intervals or reject with explanatory feedback.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <!-- Filter Pills -->
+    <a href="{{ url_for('college_admin.bookings', status='pending') }}" class="btn btn-sm {% if status_filter == 'pending' %}btn-warning text-dark fw-bold{% else %}btn-outline-warning text-dark{% endif %} px-3">Pending Action</a>
+    <a href="{{ url_for('college_admin.bookings', status='approved') }}" class="btn btn-sm {% if status_filter == 'approved' %}btn-success fw-bold{% else %}btn-outline-success{% endif %} px-3">Approved</a>
+    <a href="{{ url_for('college_admin.bookings', status='rejected') }}" class="btn btn-sm {% if status_filter == 'rejected' %}btn-danger fw-bold{% else %}btn-outline-danger{% endif %} px-3">Rejected</a>
+    <a href="{{ url_for('college_admin.bookings', status='all') }}" class="btn btn-sm {% if status_filter == 'all' %}btn-primary-gradient fw-bold{% else %}btn-outline-secondary{% endif %} px-3">All History</a>
+  </div>
+</div>
+
+<div class="glass-card overflow-hidden shadow-sm">
+  <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+    <h5 class="fw-bold mb-0">Showing {{ status_filter.upper() }} Reservations ({{ bookings_list|length }})</h5>
+    <div class="input-group" style="max-width: 280px;">
+      <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+      <input type="text" class="form-control border-start-0 py-1" id="tableSearchInput" placeholder="Search requester or resource...">
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Resource & Location</th>
+          <th>Requested By</th>
+          <th>Date & Time Slot</th>
+          <th>Academic Purpose</th>
+          <th>State</th>
+          <th class="text-end">Decision Controls</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in bookings_list %}
+        <tr>
+          <td class="font-monospace fw-bold text-primary fs-7">#BKG-{{ b.id }}</td>
+          <td>
+            <div class="fw-bold text-dark">{{ b.resource.name }}</div>
+            <small class="text-muted fs-7"><i class="bi bi-geo-alt me-1"></i>{{ b.resource.location }}</small>
+          </td>
+          <td>
+            <div class="fw-semibold fs-7">{{ b.user.full_name }}</div>
+            <span class="badge bg-light text-primary border text-uppercase">{{ b.user.role }}</span>
+            <small class="d-block text-muted fs-8 font-monospace">{{ b.user.email }}</small>
+          </td>
+          <td>
+            <div class="fw-bold text-primary fs-7">{{ b.booking_date.strftime('%a, %b %d, %Y') }}</div>
+            <span class="badge bg-dark text-white font-monospace">{{ b.start_time.strftime('%I:%M %p') }} - {{ b.end_time.strftime('%I:%M %p') }}</span>
+          </td>
+          <td>
+            <div class="fs-7 text-secondary" style="max-width: 220px;">{{ b.purpose }}</div>
+            {% if b.admin_remark %}
+            <small class="d-block text-muted mt-1 fst-italic">Admin note: {{ b.admin_remark }}</small>
+            {% endif %}
+          </td>
+          <td>
+            <span class="badge {{ b.status_badge }} px-3 py-2 text-uppercase fw-bold">{{ b.status }}</span>
+          </td>
+          <td class="text-end">
+            {% if b.status == 'pending' %}
+            <button class="btn btn-outline-primary btn-sm px-3 fw-bold" data-bs-toggle="modal" data-bs-target="#decisionModal{{ b.id }}">
+              <i class="bi bi-gear-wide me-1"></i> Decide
+            </button>
+
+            <!-- Decision Modal with Admin Remark -->
+            <div class="modal fade text-start" id="decisionModal{{ b.id }}" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content glass-card border-0 p-3" style="background: var(--bg-card);">
+                  <div class="modal-header border-bottom pb-2">
+                    <h5 class="fw-bold text-primary mb-0"><i class="bi bi-shield-check me-2"></i> Review Booking #BKG-{{ b.id }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body py-3">
+                    <div class="p-3 bg-light rounded-3 mb-3">
+                      <h6 class="fw-bold mb-1">{{ b.resource.name }}</h6>
+                      <div class="fs-7 text-muted mb-2">Requested by <strong>{{ b.user.full_name }}</strong> on {{ b.booking_date.strftime('%B %d, %Y') }}</div>
+                      <div class="badge bg-primary fs-6">{{ b.start_time.strftime('%I:%M %p') }} &rarr; {{ b.end_time.strftime('%I:%M %p') }}</div>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('college_admin.decide_booking', booking_id=b.id, action='approve') }}" id="approveForm{{ b.id }}">
+                      {{ form.hidden_tag() }}
+                      <label class="form-label fw-semibold fs-7 text-muted">Administrative Note / Remark (Visible to Requester)</label>
+                      <textarea name="admin_remark" class="form-control py-2 mb-4" rows="2" placeholder="e.g. Approved. Please pick up lab keys from Block security..."></textarea>
+                      
+                      <div class="d-flex justify-content-between gap-2">
+                        <button type="button" onclick="submitReject('{{ b.id }}')" class="btn btn-outline-danger w-50 py-2 fw-bold">
+                          <i class="bi bi-x-circle me-1"></i> Reject Request
+                        </button>
+                        <button type="submit" class="btn btn-success w-50 py-2 fw-bold shadow-sm">
+                          <i class="bi bi-check2-circle me-1"></i> Approve Slot
+                        </button>
+                      </div>
+                    </form>
+                    
+                    <form method="POST" action="{{ url_for('college_admin.decide_booking', booking_id=b.id, action='reject') }}" id="rejectForm{{ b.id }}" style="display:none;">
+                      {{ form.hidden_tag() }}
+                      <input type="hidden" name="admin_remark" id="rejectRemark{{ b.id }}">
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% else %}
+              <span class="text-muted fs-7"><i class="bi bi-check2-all text-success me-1"></i> Finalized</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="7" class="text-center py-5 text-muted">
+            <i class="bi bi-calendar-x fs-1 d-block mb-2 text-secondary"></i>
+            No {{ status_filter }} reservations recorded yet in this college workspace.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+function submitReject(bookingId) {
+  const modal = document.querySelector('#decisionModal' + bookingId);
+  const textarea = modal.querySelector('textarea[name="admin_remark"]');
+  const rejectForm = document.getElementById('rejectForm' + bookingId);
+  const rejectInput = document.getElementById('rejectRemark' + bookingId);
+  
+  rejectInput.value = textarea.value || "Slot unavailable or maintenance scheduled.";
+  rejectForm.submit();
+}
+</script>
+{% endblock %}

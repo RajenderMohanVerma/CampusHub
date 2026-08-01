@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Student Directory - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+  <div>
+    <h3 class="fw-bolder mb-1"><i class="bi bi-mortarboard-fill text-primary me-2"></i> Enrolled Student Body Directory</h3>
+    <p class="text-muted fs-7 mb-0">Manage enrolled students inside your institution workspace who can request conflict-free time slots.</p>
+  </div>
+  <button class="btn btn-primary-gradient px-4 py-2 fw-bold" data-bs-toggle="modal" data-bs-target="#enrollStudentModal">
+    <i class="bi bi-person-add me-2"></i> Enroll New Student
+  </button>
+</div>
+
+<div class="glass-card overflow-hidden">
+  <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+    <h5 class="fw-bold mb-0">Active Enrolled Students ({{ students|length }})</h5>
+    <div class="input-group" style="max-width: 300px;">
+      <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+      <input type="text" class="form-control border-start-0 py-1" id="tableSearchInput" placeholder="Filter students...">
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th>Student Identity</th>
+          <th>Enrollment / Roll No</th>
+          <th>Academic Email</th>
+          <th>Department</th>
+          <th>Degree Course Program</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in students %}
+        <tr>
+          <td>
+            <div class="d-flex align-items-center gap-3">
+              <img src="https://ui-avatars.com/api/?name={{ s.user.full_name|urlencode }}&background=10b981&color=fff&size=80" alt="Avatar" class="rounded-circle shadow-sm" style="width: 40px; height: 40px;">
+              <span class="fw-bold text-primary fs-6">{{ s.user.full_name }}</span>
+            </div>
+          </td>
+          <td><span class="badge bg-light text-primary border font-monospace px-3 py-1">#{{ s.enrollment_number }}</span></td>
+          <td class="font-monospace fs-7">{{ s.user.email }}</td>
+          <td>
+            {% if s.department %}
+              <span class="badge bg-primary bg-opacity-10 text-primary border px-3 py-1">{{ s.department.code }}</span>
+            {% else %}
+              <span class="badge bg-secondary text-white">General Hub</span>
+            {% endif %}
+          </td>
+          <td class="fw-semibold fs-7">{{ s.course_name }}</td>
+          <td>
+            <span class="badge badge-saas bg-success bg-opacity-25 text-success border border-success border-opacity-50">ENROLLED</span>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="6" class="text-center py-5 text-muted">No students enrolled yet inside this tenant workspace. Click "Enroll New Student" above to begin.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal Enroll Student -->
+<div class="modal fade" id="enrollStudentModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content glass-card border-0 p-4" style="background: var(--bg-card);">
+      <div class="modal-header border-bottom pb-3">
+        <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-mortarboard me-2"></i> Enroll Student Account</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{{ url_for('college_admin.student_list') }}">
+        <div class="modal-body py-4">
+          {{ form.hidden_tag() }}
+          <div class="alert alert-info py-2 px-3 fs-7 mb-4 d-flex align-items-center">
+            <i class="bi bi-info-circle-fill fs-5 me-2"></i> Default initial password assigned: <strong class="ms-1 font-monospace">student123</strong>
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.first_name.label.text }} <span class="text-danger">*</span></label>
+              {{ form.first_name(class="form-control py-2", placeholder="Aarav") }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.last_name.label.text }} <span class="text-danger">*</span></label>
+              {{ form.last_name(class="form-control py-2", placeholder="Patel") }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.email.label.text }} <span class="text-danger">*</span></label>
+              {{ form.email(class="form-control py-2", placeholder="aarav.cse@iitd.ac.in") }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.phone.label.text }} <span class="text-danger">*</span></label>
+              {{ form.phone(class="form-control py-2", placeholder="+91 97110 33211") }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold fs-7 text-muted">Enrollment / Roll Number <span class="text-danger">*</span></label>
+              {{ form.identifier(class="form-control py-2 text-uppercase font-monospace", placeholder="2024-CSE-1099") }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.department_id.label.text }} <span class="text-danger">*</span></label>
+              {{ form.department_id(class="form-select py-2") }}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold fs-7 text-muted">Degree / Course Program Name <span class="text-danger">*</span></label>
+              {{ form.extra_field(class="form-control py-2", placeholder="B.Tech Computer Science & Engineering (4 Year)") }}
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-top pt-3">
+          <button type="button" class="btn btn-outline-secondary px-4 fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary-gradient px-5 py-2 fw-bold shadow-md">Enroll Student Now</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

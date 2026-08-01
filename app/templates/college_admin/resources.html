@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Manage Campus Resources - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+  <div>
+    <h3 class="fw-bolder mb-1"><i class="bi bi-pc-display text-primary me-2"></i> Resource & Facilities Catalog</h3>
+    <p class="text-muted fs-7 mb-0">Deploy labs, seminar auditoriums, high-end specialized apparatus, and projection systems into the booking engine.</p>
+  </div>
+  <button class="btn btn-primary-gradient px-4 py-2 fw-bold" data-bs-toggle="modal" data-bs-target="#deployResourceModal">
+    <i class="bi bi-plus-lg me-2"></i> Deploy New Campus Resource
+  </button>
+</div>
+
+<!-- Filter input & Resource Grid -->
+<div class="glass-card p-3 mb-4 d-flex justify-content-between align-items-center">
+  <div class="input-group" style="max-width: 380px;">
+    <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+    <input type="text" class="form-control border-start-0 py-2" id="tableSearchInput" placeholder="Search catalog by facility name or location...">
+  </div>
+  <span class="text-muted fs-7 fw-bold">{{ res_list|length }} total assets active in workspace</span>
+</div>
+
+<div class="row g-4">
+  {% for res in res_list %}
+  <div class="col-md-6 col-xl-4">
+    <div class="glass-card h-100 overflow-hidden d-flex flex-column justify-content-between position-relative shadow-sm border-0">
+      <div>
+        <!-- Image Cover -->
+        <div class="position-relative" style="height: 180px;">
+          <img src="{{ res.image_url or 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=80' }}" alt="{{ res.name }}" class="w-100 h-100 object-fit-cover">
+          <div class="position-absolute top-0 end-0 m-3">
+            {% if res.is_active %}
+              <span class="badge bg-success shadow-sm px-3 py-1"><i class="bi bi-check-circle me-1"></i> ACTIVE</span>
+            {% else %}
+              <span class="badge bg-danger shadow-sm px-3 py-1"><i class="bi bi-slash-circle me-1"></i> INACTIVE</span>
+            {% endif %}
+          </div>
+          <div class="position-absolute bottom-0 start-0 m-3">
+            <span class="badge bg-dark bg-opacity-75 text-white border px-3 py-1 font-monospace fs-7">{{ res.resource_type }}</span>
+          </div>
+        </div>
+
+        <div class="p-4">
+          <h5 class="fw-bold text-primary mb-2">{{ res.name }}</h5>
+          <div class="d-flex align-items-center gap-3 text-muted fs-7 mb-3">
+            <span><i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ res.location }}</span>
+            <span><i class="bi bi-people-fill text-info me-1"></i> Cap: {{ res.capacity }} seats</span>
+          </div>
+          <p class="text-muted fs-7 mb-0">{{ res.description or 'High-performance campus functional infrastructure ready for student and faculty scheduling.' }}</p>
+        </div>
+      </div>
+
+      <div class="px-4 py-3 bg-light border-top d-flex justify-content-between align-items-center">
+        <span class="fs-7 fw-semibold text-muted">{{ res.bookings.count() }} lifetime reservations</span>
+        <a href="{{ url_for('college_admin.bookings', status='all') }}" class="btn btn-outline-primary btn-sm fw-semibold px-3">View Bookings</a>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="col-12">
+    <div class="glass-card p-5 text-center my-4 text-muted">
+      <i class="bi bi-box-seam fs-1 d-block mb-3 text-primary"></i>
+      <h4 class="fw-bold">No Resource Assets Deployed Yet</h4>
+      <p class="max-w-600 mx-auto">Your institution has not configured any physical facilities or digital workstations. Click the button below to deploy your first resource!</p>
+      <button class="btn btn-primary-gradient px-4 py-2 mt-2 fw-bold" data-bs-toggle="modal" data-bs-target="#deployResourceModal">
+        <i class="bi bi-plus-lg me-2"></i> Deploy Asset Now
+      </button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Modal Deploy Resource -->
+<div class="modal fade" id="deployResourceModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content glass-card border-0 p-4" style="background: var(--bg-card);">
+      <div class="modal-header border-bottom pb-3">
+        <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-pc-display me-2"></i> Deploy New Campus Resource Asset</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{{ url_for('college_admin.resources') }}">
+        <div class="modal-body py-4">
+          {{ form.hidden_tag() }}
+          
+          <div class="row g-3">
+            <div class="col-md-7">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.name.label.text }} <span class="text-danger">*</span></label>
+              {{ form.name(class="form-control py-2", placeholder="e.g. GPU Deep Learning Lab (Block 4)") }}
+            </div>
+            <div class="col-md-5">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.resource_type.label.text }} <span class="text-danger">*</span></label>
+              {{ form.resource_type(class="form-select py-2") }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.capacity.label.text }} <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="bi bi-people"></i></span>
+                {{ form.capacity(class="form-control py-2", placeholder="45") }}
+              </div>
+            </div>
+            <div class="col-md-8">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.location.label.text }} <span class="text-danger">*</span></label>
+              {{ form.location(class="form-control py-2", placeholder="Block B, 2nd Floor, Room 204") }}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.image_url.label.text }}</label>
+              {{ form.image_url(class="form-control py-2", placeholder="https://images.unsplash.com/...") }}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.description.label.text }}</label>
+              {{ form.description(class="form-control py-2", rows="3", placeholder="Equipped with 30x RTX 4090 workstations, dual 4K projectors, and fiber Ethernet...") }}
+            </div>
+            <div class="col-12">
+              <div class="form-check form-switch pt-2">
+                {{ form.is_active(class="form-check-input", id="resActiveSwitch", role="switch") }}
+                <label class="form-check-label fw-bold fs-7 ms-2" for="resActiveSwitch">{{ form.is_active.label.text }}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-top pt-3">
+          <button type="button" class="btn btn-outline-secondary px-4 fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary-gradient px-5 py-2 fw-bold shadow-md">Deploy Asset To Engine</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

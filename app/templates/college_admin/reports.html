@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Tenant Analytical Reports - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="mb-4 pb-2 border-bottom">
+  <h3 class="fw-bolder mb-1"><i class="bi bi-graph-up-arrow text-primary me-2"></i> Tenant Utilization Analytics & Telemetry</h3>
+  <p class="text-muted fs-7 mb-0">Cross-departmental resource consumption metrics and scheduling efficiency reports for your university.</p>
+</div>
+
+<div class="row g-4 mb-5">
+  <!-- Dept Bookings Chart -->
+  <div class="col-lg-6">
+    <div class="glass-card p-4 h-100">
+      <h6 class="fw-bold text-uppercase fs-7 text-primary mb-3"><i class="bi bi-bar-chart-fill me-2"></i> Departmental Booking Volume</h6>
+      <div style="position: relative; height: 320px;">
+        <canvas id="deptBookingsChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Distribution Chart -->
+  <div class="col-lg-6">
+    <div class="glass-card p-4 h-100">
+      <h6 class="fw-bold text-uppercase fs-7 text-success mb-3"><i class="bi bi-pie-chart-fill me-2"></i> Reservation Status Breakdown</h6>
+      <div style="position: relative; height: 320px;">
+        <canvas id="statusChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="glass-card overflow-hidden">
+  <div class="p-4 border-bottom">
+    <h5 class="fw-bold mb-0"><i class="bi bi-pc-display text-info me-2"></i> Asset Utilization Directory</h5>
+  </div>
+  <div class="table-responsive">
+    <table class="table-custom mb-0">
+      <thead>
+        <tr>
+          <th>Resource Asset Name</th>
+          <th>Classification Type</th>
+          <th>Campus Location</th>
+          <th>Seating Capacity</th>
+          <th>Lifetime Reservations Executed</th>
+          <th>Operational Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in all_resources %}
+        <tr>
+          <td class="fw-bold text-primary">{{ r.name }}</td>
+          <td><span class="badge bg-light text-dark border font-monospace">{{ r.resource_type }}</span></td>
+          <td class="fs-7 text-muted">{{ r.location }}</td>
+          <td class="font-monospace fw-bold">{{ r.capacity }} seats</td>
+          <td><span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 fs-7">{{ r.bookings.count() }} Bookings</span></td>
+          <td>
+            {% if r.is_active %}
+              <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50">ONLINE</span>
+            {% else %}
+              <span class="badge bg-danger">MAINTENANCE</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const deptNames = {{ dept_names|tojson }};
+  const deptBookings = {{ dept_bookings|tojson }};
+  const statuses = {{ statuses|tojson }};
+  const statusCounts = {{ status_counts|tojson }};
+  
+  const textColor = document.documentElement.getAttribute('data-theme') === 'dark' ? '#e4e6ef' : '#181c32';
+  const gridColor = document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+
+  new Chart(document.getElementById('deptBookingsChart'), {
+    type: 'bar',
+    data: {
+      labels: deptNames.length ? deptNames : ['General Campus'],
+      datasets: [{
+        label: 'Total Bookings',
+        data: deptBookings.length ? deptBookings : [0],
+        backgroundColor: 'rgba(99, 102, 241, 0.8)',
+        borderColor: '#6366f1',
+        borderWidth: 2,
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { ticks: { color: textColor }, grid: { display: false } },
+        y: { ticks: { color: textColor, stepSize: 1 }, grid: { color: gridColor }, beginAtZero: true }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+
+  new Chart(document.getElementById('statusChart'), {
+    type: 'doughnut',
+    data: {
+      labels: statuses.map(s => s.toUpperCase()),
+      datasets: [{
+        data: statusCounts,
+        backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#6b7280'],
+        borderWidth: 2,
+        borderColor: 'transparent'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Outfit', weight: '600' } } }
+      }
+    }
+  });
+});
+</script>
+{% endblock %}

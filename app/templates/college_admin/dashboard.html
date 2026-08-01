@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% block title %}College Admin Workspace Dashboard - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+  <div>
+    <h3 class="fw-bolder mb-1"><i class="bi bi-person-workspace text-primary me-2"></i> Tenant Administrative Control Hub</h3>
+    <p class="text-muted fs-7 mb-0">Workspace scope strictly locked to <strong class="text-primary font-monospace">{{ current_user.college.name }} (#{{ current_user.college.code }})</strong></p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('college_admin.resources') }}" class="btn btn-primary-gradient btn-sm fw-bold px-3">
+      <i class="bi bi-plus-circle me-1"></i> Deploy Asset
+    </a>
+    <a href="{{ url_for('college_admin.bookings', status='pending') }}" class="btn btn-warning btn-sm fw-bold px-3 text-dark">
+      <i class="bi bi-clock-history me-1"></i> Pending Requests ({{ pending_bookings_count }})
+    </a>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row g-4 mb-5">
+  <div class="col-xl-3 col-md-6">
+    <div class="glass-card stat-card h-100 border-start border-primary border-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-uppercase fw-bold fs-7 text-muted">Departments</span>
+        <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-diagram-3-fill"></i></div>
+      </div>
+      <h2 class="fw-bolder display-6 mb-1 text-primary">{{ dept_count }}</h2>
+      <a href="{{ url_for('college_admin.departments') }}" class="fs-7 text-primary text-decoration-none fw-semibold">Manage Academic Divisions &rarr;</a>
+    </div>
+  </div>
+
+  <div class="col-xl-3 col-md-6">
+    <div class="glass-card stat-card h-100 border-start border-info border-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-uppercase fw-bold fs-7 text-muted">Campus Resources</span>
+        <div class="stat-icon bg-info bg-opacity-10 text-info"><i class="bi bi-pc-display"></i></div>
+      </div>
+      <h2 class="fw-bolder display-6 mb-1 text-info">{{ res_count }}</h2>
+      <a href="{{ url_for('college_admin.resources') }}" class="fs-7 text-info text-decoration-none fw-semibold">Configure Labs & Equipment &rarr;</a>
+    </div>
+  </div>
+
+  <div class="col-xl-3 col-md-6">
+    <div class="glass-card stat-card h-100 border-start border-success border-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-uppercase fw-bold fs-7 text-muted">Faculty & Students</span>
+        <div class="stat-icon bg-success bg-opacity-10 text-success"><i class="bi bi-people-fill"></i></div>
+      </div>
+      <h2 class="fw-bolder display-6 mb-1 text-success">{{ faculty_count + student_count }}</h2>
+      <div class="fs-7 text-muted">{{ faculty_count }} Professors | {{ student_count }} Enrolled Students</div>
+    </div>
+  </div>
+
+  <div class="col-xl-3 col-md-6">
+    <div class="glass-card stat-card h-100 border-start border-warning border-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-uppercase fw-bold fs-7 text-muted">Pending Reservations</span>
+        <div class="stat-icon bg-warning bg-opacity-10 text-warning"><i class="bi bi-bell-fill"></i></div>
+      </div>
+      <h2 class="fw-bolder display-6 mb-1 text-warning">{{ pending_bookings_count }}</h2>
+      <span class="badge bg-success bg-opacity-10 text-success fs-7">{{ approved_bookings_count }} Approved Slots Active</span>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-5">
+  <!-- Asset Type Distribution Chart -->
+  <div class="col-lg-5">
+    <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+      <div>
+        <h5 class="fw-bold mb-3"><i class="bi bi-pie-chart-fill text-primary me-2"></i> Asset Category Profile</h5>
+        <p class="text-muted fs-7 mb-4">Proportional breakdown of facilities actively managed within your campus.</p>
+        <div style="position: relative; height: 260px;">
+          <canvas id="tenantAssetChart"></canvas>
+        </div>
+      </div>
+      <div class="text-center mt-3 pt-3 border-top">
+        <a href="{{ url_for('college_admin.reports') }}" class="btn btn-outline-primary btn-sm fw-semibold w-100">View Utilization Analytics</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pending Bookings Action Queue -->
+  <div class="col-lg-7">
+    <div class="glass-card h-100 d-flex flex-column justify-content-between overflow-hidden">
+      <div>
+        <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+          <h5 class="fw-bold mb-0"><i class="bi bi-inbox-fill text-warning me-2"></i> Immediate Booking Requests Queue</h5>
+          <a href="{{ url_for('college_admin.bookings', status='pending') }}" class="text-primary text-decoration-none fw-bold fs-7">All Bookings &rarr;</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table-custom mb-0">
+            <thead>
+              <tr>
+                <th>Resource Asset</th>
+                <th>Requester</th>
+                <th>Slot Interval</th>
+                <th class="text-end">Fast Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for b in pending_bookings %}
+              <tr>
+                <td>
+                  <span class="fw-bold text-primary d-block">{{ b.resource.name }}</span>
+                  <small class="text-muted fs-7">{{ b.booking_date.strftime('%b %d, %Y') }}</small>
+                </td>
+                <td>
+                  <div class="fw-semibold fs-7">{{ b.user.full_name }}</div>
+                  <span class="badge bg-light text-muted border text-uppercase">{{ b.user.role }}</span>
+                </td>
+                <td class="font-monospace fs-7 text-dark fw-bold">{{ b.start_time.strftime('%I:%M%p') }} - {{ b.end_time.strftime('%I:%M%p') }}</td>
+                <td class="text-end">
+                  <div class="d-flex justify-content-end gap-1">
+                    <form method="POST" action="{{ url_for('college_admin.decide_booking', booking_id=b.id, action='approve') }}" style="display:inline;">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button type="submit" class="btn btn-success btn-sm px-2 py-1 fs-7 fw-bold" title="Approve Slot"><i class="bi bi-check2"></i> Allow</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('college_admin.decide_booking', booking_id=b.id, action='reject') }}" style="display:inline;">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button type="submit" class="btn btn-outline-danger btn-sm px-2 py-1 fs-7 fw-bold" title="Reject"><i class="bi bi-x"></i> Deny</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="4" class="text-center py-5 text-muted">
+                  <i class="bi bi-check-circle-fill text-success fs-2 d-block mb-2"></i>
+                  <span class="fw-semibold">No pending reservation requests awaiting your administrative authorization.</span>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Tenant Telemetry Log -->
+<div class="glass-card overflow-hidden">
+  <div class="p-4 border-bottom">
+    <h5 class="fw-bold mb-0"><i class="bi bi-clock-history text-info me-2"></i> Workspace Audit Activity Feed</h5>
+  </div>
+  <div class="table-responsive">
+    <table class="table-custom mb-0">
+      <thead>
+        <tr>
+          <th>Timestamp (UTC)</th>
+          <th>Action Type</th>
+          <th>Responsible Member</th>
+          <th>Diagnostic Summary</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in recent_activity %}
+        <tr>
+          <td class="font-monospace fs-7 text-muted">{{ log.timestamp|format_timestamp }}</td>
+          <td><span class="badge bg-primary bg-opacity-10 text-primary border">{{ log.action }}</span></td>
+          <td class="fw-semibold fs-7">{{ log.user.email if log.user else 'Automated Worker' }}</td>
+          <td class="fs-7 text-secondary">{{ log.details }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="text-center py-4 text-muted">No telemetry events logged yet in this tenant workspace.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const types = {{ res_types|tojson }};
+  const counts = {{ res_type_counts|tojson }};
+  const textColor = document.documentElement.getAttribute('data-theme') === 'dark' ? '#e4e6ef' : '#181c32';
+  
+  new Chart(document.getElementById('tenantAssetChart'), {
+    type: 'polarArea',
+    data: {
+      labels: types,
+      datasets: [{
+        data: counts,
+        backgroundColor: [
+          'rgba(99, 102, 241, 0.7)',
+          'rgba(14, 165, 233, 0.7)',
+          'rgba(16, 185, 129, 0.7)',
+          'rgba(245, 158, 11, 0.7)',
+          'rgba(239, 68, 68, 0.7)',
+          'rgba(139, 92, 246, 0.7)'
+        ],
+        borderWidth: 1,
+        borderColor: 'transparent'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { color: textColor, font: { family: 'Outfit', size: 11, weight: '600' } } }
+      },
+      scales: {
+        r: { ticks: { display: false }, grid: { color: 'rgba(128,128,128,0.15)' } }
+      }
+    }
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}Superadmin HQ Dashboard - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+  <div>
+    <h3 class="fw-bolder mb-1"><i class="bi bi-shield-lock text-primary me-2"></i> Platform Superadmin HQ</h3>
+    <p class="text-muted fs-7 mb-0">Multi-university infrastructure monitoring, cryptographic tenant boundaries, and approval workflows.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('platform_admin.colleges', status='pending') }}" class="btn btn-warning btn-sm fw-bold px-3 d-flex align-items-center">
+      <i class="bi bi-hourglass-split me-1"></i> Pending Approvals ({{ pending_colleges }})
+    </a>
+    <a href="{{ url_for('platform_admin.reports') }}" class="btn btn-outline-primary btn-sm fw-bold px-3">
+      <i class="bi bi-bar-chart-fill me-1"></i> HQ Analytics
+    </a>
+  </div>
+</div>
+
+<!-- Key Performance Indicators (KPIs) -->
+<div class="row g-4 mb-5">
+  <div class="col-xl-3 col-md-6">
+    <div class="glass-card stat-card h-100 border-start border-primary border-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-uppercase fw-bold fs-7 text-muted">Total Institutions</span>
+        <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-buildings-fill"></i></div>
+      </div>
+      <h2 class="fw-bolder display-6 mb-1 text-primary">{{ total_colleges }}</h2>
+      <span class="badge bg-success bg-opacity-10 text-success fs-7">{{ active_colleges }} Active Tenancies</span>
+    </div>
+  </div>
+
+  <div class="col-xl-3 col-md-6">
+    <div class="glass-card stat-card h-100 border-start border-warning border-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-uppercase fw-bold fs-7 text-muted">Pending Applications</span>
+        <div class="stat-icon bg-warning bg-opacity-10 text-warning"><i class="bi bi-clock-history"></i></div>
+      </div>
+      <h2 class="fw-bolder display-6 mb-1 text-warning">{{ pending_colleges }}</h2>
+      <span class="text-muted fs-7">Requires HQ verification</span>
+    </div>
+  </div>
+
+  <div class="col-xl-3 col-md-6">
+    <div class="glass-card stat-card h-100 border-start border-info border-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-uppercase fw-bold fs-7 text-muted">Global Campus Assets</span>
+        <div class="stat-icon bg-info bg-opacity-10 text-info"><i class="bi bi-pc-display"></i></div>
+      </div>
+      <h2 class="fw-bolder display-6 mb-1 text-info">{{ total_resources }}</h2>
+      <span class="text-muted fs-7">{{ total_bookings }} cumulative reservations</span>
+    </div>
+  </div>
+
+  <div class="col-xl-3 col-md-6">
+    <div class="glass-card stat-card h-100 border-start border-success border-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-uppercase fw-bold fs-7 text-muted">Active Users Global</span>
+        <div class="stat-icon bg-success bg-opacity-10 text-success"><i class="bi bi-people-fill"></i></div>
+      </div>
+      <h2 class="fw-bolder display-6 mb-1 text-success">{{ total_users }}</h2>
+      <span class="text-muted fs-7">Admins, Faculty & Students</span>
+    </div>
+  </div>
+</div>
+
+<!-- Pending College Onboarding Queue -->
+<div class="glass-card mb-5 overflow-hidden">
+  <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+    <h5 class="fw-bold mb-0"><i class="bi bi-inbox-fill text-warning me-2"></i> Action Required: Pending University Applications</h5>
+    <a href="{{ url_for('platform_admin.colleges') }}" class="text-primary text-decoration-none fw-bold fs-7">View All Universities <i class="bi bi-arrow-right"></i></a>
+  </div>
+  <div class="table-responsive">
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th>Institution & Code</th>
+          <th>Registrar Contact</th>
+          <th>Campus Location</th>
+          <th>Applied Date</th>
+          <th>Status</th>
+          <th class="text-end">HQ Action Controls</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if pending_list %}
+          {% for col in pending_list %}
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-3">
+                <img src="{{ col.logo_url }}" alt="Logo" class="rounded-3 shadow-sm" style="width: 42px; height: 42px;">
+                <div>
+                  <h6 class="fw-bold mb-0">{{ col.name }}</h6>
+                  <span class="badge bg-light text-dark border font-monospace">#{{ col.code }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="fs-7 fw-semibold">{{ col.email }}</div>
+              <small class="text-muted">{{ col.phone }}</small>
+            </td>
+            <td class="fs-7 text-muted">{{ col.address[:45] }}...</td>
+            <td class="fs-7">{{ col.created_at|format_date }}</td>
+            <td><span class="badge badge-saas bg-warning text-dark">PENDING</span></td>
+            <td class="text-end">
+              <div class="d-flex justify-content-end gap-2">
+                <form method="POST" action="{{ url_for('platform_admin.approve_college', college_id=col.id) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="btn btn-success btn-sm fw-bold px-3 shadow-sm" title="Approve & Unlock Workspace">
+                    <i class="bi bi-check2-circle me-1"></i> Approve
+                  </button>
+                </form>
+                <form method="POST" action="{{ url_for('platform_admin.reject_college', college_id=col.id) }}" onsubmit="return confirm('Are you sure you want to reject this college application?');">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="btn btn-outline-danger btn-sm px-3 fw-bold" title="Reject Application">
+                    <i class="bi bi-x-circle"></i> Reject
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="6" class="text-center py-5 text-muted">
+              <i class="bi bi-check-circle-fill text-success fs-2 d-block mb-2"></i>
+              <span class="fw-semibold">No pending college onboarding applications in queue. All workspaces are up to date!</span>
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Global Telemetry & Activity Feed -->
+<div class="glass-card overflow-hidden">
+  <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+    <h5 class="fw-bold mb-0"><i class="bi bi-shield-check text-info me-2"></i> Systemic Security & Audit Telemetry</h5>
+    <a href="{{ url_for('platform_admin.audit_logs') }}" class="text-primary text-decoration-none fw-bold fs-7">Full Audit Logs <i class="bi bi-arrow-right"></i></a>
+  </div>
+  <div class="table-responsive">
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th>Timestamp (UTC)</th>
+          <th>Event Classification</th>
+          <th>Actor / User</th>
+          <th>Tenant ID</th>
+          <th>Diagnostic Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in recent_logs %}
+        <tr>
+          <td class="font-monospace fs-7 text-muted">{{ log.timestamp|format_timestamp }}</td>
+          <td>
+            <span class="badge badge-saas {% if 'LOGIN' in log.action %}bg-primary bg-opacity-10 text-primary{% elif 'APPROV' in log.action %}bg-success bg-opacity-10 text-success{% else %}bg-secondary bg-opacity-10 text-secondary{% endif %}">
+              {{ log.action }}
+            </span>
+          </td>
+          <td class="fw-medium fs-7">{{ log.user.email if log.user else 'System Engine' }}</td>
+          <td>
+            {% if log.college_id %}
+              <span class="badge bg-light text-primary border">College ID #{{ log.college_id }}</span>
+            {% else %}
+              <span class="badge bg-danger text-white">HQ Global</span>
+            {% endif %}
+          </td>
+          <td class="fs-7 text-secondary">{{ log.details }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

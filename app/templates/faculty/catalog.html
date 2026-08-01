@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Faculty Resource Catalog - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom gap-3">
+  <div>
+    <h3 class="fw-bolder mb-1"><i class="bi bi-buildings text-primary me-2"></i> Faculty Facilities & Equipment Catalog</h3>
+    <p class="text-muted fs-7 mb-0">Select and reserve high-capacity auditoriums and testing instruments inside <strong class="text-primary font-monospace">{{ current_user.college.name }}</strong>.</p>
+  </div>
+  <div>
+    <!-- Category Pills -->
+    <div class="d-flex flex-wrap gap-2">
+      <a href="{{ url_for('faculty.catalog', type='all') }}" class="btn btn-sm {% if type_filter=='all' %}btn-primary-gradient{% else %}btn-outline-secondary{% endif %} px-3 fw-semibold">All Assets</a>
+      <a href="{{ url_for('faculty.catalog', type='Seminar Hall') }}" class="btn btn-sm {% if type_filter=='Seminar Hall' %}btn-success{% else %}btn-outline-success{% endif %} px-3 fw-semibold">Seminar Halls</a>
+      <a href="{{ url_for('faculty.catalog', type='Classroom') }}" class="btn btn-sm {% if type_filter=='Classroom' %}btn-info text-white{% else %}btn-outline-info{% endif %} px-3 fw-semibold">Classrooms</a>
+      <a href="{{ url_for('faculty.catalog', type='Computer Lab') }}" class="btn btn-sm {% if type_filter=='Computer Lab' %}btn-primary{% else %}btn-outline-primary{% endif %} px-3 fw-semibold">Computer Labs</a>
+      <a href="{{ url_for('faculty.catalog', type='Conference Room') }}" class="btn btn-sm {% if type_filter=='Conference Room' %}btn-warning text-dark{% else %}btn-outline-warning text-dark{% endif %} px-3 fw-semibold">Conference Rooms</a>
+      <a href="{{ url_for('faculty.catalog', type='Equipment') }}" class="btn btn-sm {% if type_filter=='Equipment' %}btn-danger{% else %}btn-outline-danger{% endif %} px-3 fw-semibold">Specialized Equipment</a>
+    </div>
+  </div>
+</div>
+
+<div class="glass-card p-3 mb-4 d-flex justify-content-between align-items-center">
+  <div class="input-group" style="max-width: 360px;">
+    <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+    <input type="text" class="form-control border-start-0 py-2" id="tableSearchInput" placeholder="Search catalog by name or location...">
+  </div>
+  <span class="text-muted fs-7 fw-bold">{{ resources_list|length }} facilities ready for faculty authorization</span>
+</div>
+
+<div class="row g-4 mb-5">
+  {% for r in resources_list %}
+  <div class="col-md-6 col-xl-4">
+    <div class="glass-card h-100 overflow-hidden d-flex flex-column justify-content-between shadow-sm border-0">
+      <div>
+        <div style="height: 190px; position: relative;">
+          <img src="{{ r.image_url or 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&auto=format&fit=crop&q=80' }}" alt="{{ r.name }}" class="w-100 h-100 object-fit-cover">
+          <span class="badge bg-primary position-absolute bottom-0 start-0 m-3 font-monospace fs-7">{{ r.resource_type }}</span>
+        </div>
+
+        <div class="p-4">
+          <h5 class="fw-bold text-primary mb-2">{{ r.name }}</h5>
+          <div class="d-flex align-items-center justify-content-between text-muted fs-7 mb-3">
+            <span><i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ r.location }}</span>
+            <span class="badge bg-light text-primary border font-monospace">{{ r.capacity }} Delegates</span>
+          </div>
+          <p class="text-muted fs-7 mb-0">{{ r.description or 'High-performance instructional facility ready for faculty research and symposiums.' }}</p>
+        </div>
+      </div>
+
+      <div class="p-4 bg-light border-top d-flex justify-content-between align-items-center">
+        <span class="fs-8 text-primary fw-bold"><i class="bi bi-star-fill text-warning me-1"></i> Faculty Priority Authorized</span>
+        <a href="{{ url_for('faculty.book_resource', resource_id=r.id) }}" class="btn btn-primary-gradient px-4 py-2 fw-bold shadow-sm">
+          <i class="bi bi-calendar2-check me-1"></i> Reserve Slot
+        </a>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="col-12">
+    <div class="glass-card p-5 text-center my-4 text-muted">
+      <i class="bi bi-inbox fs-1 d-block mb-3 text-secondary"></i>
+      <h4 class="fw-bold">No Resources Found Under This Filter</h4>
+      <p class="max-w-600 mx-auto">There are currently no resources matching this classification in your institution. Try switching to "All Assets".</p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

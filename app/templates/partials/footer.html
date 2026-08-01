@@ -1,0 +1,56 @@
+<footer class="footer py-5 border-top mt-5" style="background: var(--bg-card);">
+  <div class="container py-4">
+    <div class="row g-4 justify-content-between">
+      <div class="col-lg-4 col-md-6">
+        <div class="d-flex align-items-center mb-3">
+          <div class="d-flex align-items-center justify-content-center text-white me-2" style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #0ea5e9);">
+            <i class="bi bi-diagram-3-fill fs-6"></i>
+          </div>
+          <span class="fw-bold fs-5" style="color: var(--text-primary);">Campus<span style="color: var(--primary-color);">Hub</span></span>
+        </div>
+        <p class="text-muted fs-6 mb-4">
+          Empowering multi-college ecosystems with intelligent resource scheduling, conflict-free bookings, and enterprise-grade workspace tenancy.
+        </p>
+        <div class="d-flex gap-3 text-muted fs-4">
+          <a href="#" class="text-muted"><i class="bi bi-github"></i></a>
+          <a href="#" class="text-muted"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="text-muted"><i class="bi bi-linkedin"></i></a>
+          <a href="#" class="text-muted"><i class="bi bi-discord"></i></a>
+        </div>
+      </div>
+      
+      <div class="col-lg-2 col-md-6">
+        <h6 class="fw-bold text-uppercase fs-7 mb-3 text-primary">Platform</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+          <li><a href="{{ url_for('main.features') }}" class="text-muted text-decoration-none hover-primary">Core Features</a></li>
+          <li><a href="{{ url_for('main.about') }}" class="text-muted text-decoration-none">About Us</a></li>
+          <li><a href="{{ url_for('main.register_college') }}" class="text-muted text-decoration-none">University Onboarding</a></li>
+          <li><a href="{{ url_for('main.contact') }}" class="text-muted text-decoration-none">Support Desk</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-2 col-md-6">
+        <h6 class="fw-bold text-uppercase fs-7 mb-3 text-primary">Workspace Security</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+          <li><span class="text-muted">Multi-Tenant Isolation</span></li>
+          <li><span class="text-muted">Bcrypt & CSRF Protected</span></li>
+          <li><span class="text-muted">Role-Based Access (RBAC)</span></li>
+          <li><span class="text-muted">Time-Slot Collision Engine</span></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <h6 class="fw-bold text-uppercase fs-7 mb-3 text-primary">Built for Excellence</h6>
+        <p class="text-muted fs-7 mb-3">Designed as a production-ready SaaS product suitable for high-scale college networks and graduate academic evaluation.</p>
+        <span class="badge bg-success bg-opacity-10 text-success py-2 px-3 border border-success border-opacity-25 rounded-pill">
+          <i class="bi bi-check-circle-fill me-1"></i> Systems Operational & Secure
+        </span>
+      </div>
+    </div>
+    <hr class="my-4 border-secondary border-opacity-25">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-muted fs-7">
+      <span>&copy; 2026 CampusHub Platform Inc. All rights reserved.</span>
+      <span>Crafted with Python, Flask & Bootstrap 5 Modern SaaS Design</span>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,26 @@
+<!-- Toast Messages Container -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="toast align-items-center text-bg-{{ category }} border-0 shadow-lg mb-2" role="alert" aria-live="assertive" aria-atomic="true" style="border-radius: 12px; backdrop-filter: blur(10px);">
+          <div class="d-flex">
+            <div class="toast-body d-flex align-items-center fs-6">
+              {% if category == 'success' %}
+                <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+              {% elif category == 'danger' or category == 'error' %}
+                <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+              {% elif category == 'warning' %}
+                <i class="bi bi-shield-exclamation me-2 fs-5"></i>
+              {% else %}
+                <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+              {% endif %}
+              {{ message }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+</div>

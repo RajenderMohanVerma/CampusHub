@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Manage Departments - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="mb-4 pb-2 border-bottom">
+  <h3 class="fw-bolder mb-1"><i class="bi bi-diagram-3-fill text-primary me-2"></i> Academic Departments & Faculties</h3>
+  <p class="text-muted fs-7 mb-0">Establish structural divisions (e.g. Computer Science, Electrical Engineering) within your campus workspace.</p>
+</div>
+
+<div class="row g-4">
+  <!-- Create Department Form -->
+  <div class="col-lg-4">
+    <div class="glass-card p-4 shadow-sm h-100">
+      <h5 class="fw-bold mb-3 border-bottom pb-2"><i class="bi bi-plus-circle text-success me-1"></i> Create New Department</h5>
+      <form method="POST" action="{{ url_for('college_admin.departments') }}">
+        {{ form.hidden_tag() }}
+        
+        <div class="mb-3">
+          <label class="form-label fw-semibold fs-7 text-muted">{{ form.name.label.text }} <span class="text-danger">*</span></label>
+          {{ form.name(class="form-control py-2", placeholder="e.g. Computer Science & Engineering") }}
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold fs-7 text-muted">{{ form.code.label.text }} <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text bg-light text-muted">#</span>
+            {{ form.code(class="form-control py-2 text-uppercase fw-bold", placeholder="CSE / ECE / MECH") }}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold fs-7 text-muted">{{ form.head_name.label.text }}</label>
+          {{ form.head_name(class="form-control py-2", placeholder="Prof. S. R. Ramaswamy") }}
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold fs-7 text-muted">{{ form.description.label.text }}</label>
+          {{ form.description(class="form-control py-2", rows="3", placeholder="Primary computational sciences & artificial intelligence research division...") }}
+        </div>
+
+        <button type="submit" class="btn btn-primary-gradient w-100 py-3 fw-bold fs-6 shadow-md">
+          <i class="bi bi-check2-circle me-2"></i> {{ form.submit.label.text }}
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Departments Directory Table -->
+  <div class="col-lg-8">
+    <div class="glass-card overflow-hidden h-100">
+      <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0">Active Campus Divisions ({{ dept_list|length }})</h5>
+        <div class="input-group" style="max-width: 250px;">
+          <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+          <input type="text" class="form-control border-start-0 py-1" id="tableSearchInput" placeholder="Filter departments...">
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Dept Identity</th>
+              <th>Abbr Code</th>
+              <th>Head of Department</th>
+              <th>Enrolled Staff & Students</th>
+              <th>Scope Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in dept_list %}
+            <tr>
+              <td class="fw-bold text-primary">{{ d.name }}</td>
+              <td><span class="badge bg-light text-primary border font-monospace px-3 py-1">#{{ d.code }}</span></td>
+              <td class="fw-semibold fs-7">{{ d.head_name or 'Not appointed yet' }}</td>
+              <td>
+                <div class="d-flex gap-2">
+                  <span class="badge bg-info bg-opacity-10 text-info">{{ d.faculties.count() }} Faculty</span>
+                  <span class="badge bg-success bg-opacity-10 text-success">{{ d.students.count() }} Students</span>
+                </div>
+              </td>
+              <td class="fs-7 text-muted">{{ d.description or 'No general description provided.' }}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="5" class="text-center py-5 text-muted">
+                <i class="bi bi-folder2-open fs-2 d-block mb-2"></i>
+                No departments configured yet in this college workspace. Create your first department using the form!
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

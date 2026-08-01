@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Manage Campus Institutions - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom gap-3">
+  <div>
+    <h3 class="fw-bolder mb-1"><i class="bi bi-buildings-fill text-primary me-2"></i> Registered University Directory</h3>
+    <p class="text-muted fs-7 mb-0">Govern institution workspaces, authorize founding administrators, or execute workspace suspensions.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <!-- Filter Pills -->
+    <a href="{{ url_for('platform_admin.colleges', status='all') }}" class="btn btn-sm {% if status_filter == 'all' %}btn-primary-gradient{% else %}btn-outline-secondary{% endif %} px-3 fw-semibold">All</a>
+    <a href="{{ url_for('platform_admin.colleges', status='active') }}" class="btn btn-sm {% if status_filter == 'active' %}btn-success{% else %}btn-outline-success{% endif %} px-3 fw-semibold">Active</a>
+    <a href="{{ url_for('platform_admin.colleges', status='pending') }}" class="btn btn-sm {% if status_filter == 'pending' %}btn-warning text-dark{% else %}btn-outline-warning text-dark{% endif %} px-3 fw-semibold">Pending</a>
+    <a href="{{ url_for('platform_admin.colleges', status='suspended') }}" class="btn btn-sm {% if status_filter == 'suspended' %}btn-danger{% else %}btn-outline-danger{% endif %} px-3 fw-semibold">Suspended</a>
+  </div>
+</div>
+
+<div class="glass-card p-4 mb-4 d-flex justify-content-between align-items-center">
+  <div class="input-group" style="max-width: 400px;">
+    <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+    <input type="text" class="form-control border-start-0 py-2" id="tableSearchInput" placeholder="Instant search by college name or code...">
+  </div>
+  <span class="text-muted fs-7 fw-semibold">Showing {{ colleges_list|length }} institutional tenancies</span>
+</div>
+
+<div class="glass-card overflow-hidden">
+  <div class="table-responsive">
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th>University Identity</th>
+          <th>Tenant Code</th>
+          <th>Official Contact</th>
+          <th>Registration Date</th>
+          <th>Workspace Status</th>
+          <th class="text-end">HQ Governance</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for col in colleges_list %}
+        <tr>
+          <td>
+            <div class="d-flex align-items-center gap-3">
+              <img src="{{ col.logo_url }}" alt="Logo" class="rounded-3 shadow-sm" style="width: 44px; height: 44px;">
+              <div>
+                <a href="{{ url_for('platform_admin.view_college', college_id=col.id) }}" class="fw-bold mb-0 text-decoration-none text-primary d-block fs-6">{{ col.name }}</a>
+                <small class="text-muted fs-7">{{ col.website or 'No official website URL' }}</small>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge bg-light text-primary border px-3 py-2 font-monospace fs-7">#{{ col.code }}</span></td>
+          <td>
+            <div class="fs-7 fw-semibold">{{ col.email }}</div>
+            <small class="text-muted">{{ col.phone }}</small>
+          </td>
+          <td class="fs-7 text-muted">{{ col.created_at|format_date }}</td>
+          <td>
+            {% if col.status == 'active' %}
+              <span class="badge badge-saas bg-success bg-opacity-25 text-success border border-success border-opacity-50 px-3"><i class="bi bi-check-circle me-1"></i> ACTIVE</span>
+            {% elif col.status == 'pending' %}
+              <span class="badge badge-saas bg-warning bg-opacity-25 text-warning border border-warning border-opacity-50 px-3"><i class="bi bi-clock me-1"></i> PENDING</span>
+            {% elif col.status == 'suspended' %}
+              <span class="badge badge-saas bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50 px-3"><i class="bi bi-pause-circle me-1"></i> SUSPENDED</span>
+            {% else %}
+              <span class="badge badge-saas bg-secondary px-3">{{ col.status.upper() }}</span>
+            {% endif %}
+          </td>
+          <td class="text-end">
+            <div class="d-flex justify-content-end gap-2">
+              <a href="{{ url_for('platform_admin.view_college', college_id=col.id) }}" class="btn btn-outline-info btn-sm px-3 fw-bold" title="Inspect Telemetry">
+                <i class="bi bi-eye"></i> View
+              </a>
+              {% if col.status != 'active' %}
+              <form method="POST" action="{{ url_for('platform_admin.approve_college', college_id=col.id) }}" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-success btn-sm px-3 fw-bold shadow-sm" title="Activate Tenant">
+                  <i class="bi bi-check2"></i> Activate
+                </button>
+              </form>
+              {% endif %}
+              {% if col.status == 'active' %}
+              <form method="POST" action="{{ url_for('platform_admin.suspend_college', college_id=col.id) }}" onsubmit="return confirm('Suspend workspace? All campus users will be locked out immediately.');" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-outline-danger btn-sm px-3 fw-bold" title="Suspend Tenant">
+                  <i class="bi bi-pause-fill"></i> Suspend
+                </button>
+              </form>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

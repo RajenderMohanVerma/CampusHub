@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Campus Resource Catalog - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom gap-3">
+  <div>
+    <h3 class="fw-bolder mb-1"><i class="bi bi-pc-display text-primary me-2"></i> Campus Resource & Facilities Catalog</h3>
+    <p class="text-muted fs-7 mb-0">Explore specialized laboratories, seminar halls, and equipment inside <strong class="text-primary font-monospace">{{ current_user.college.name }}</strong>.</p>
+  </div>
+  <div>
+    <!-- Category Pills -->
+    <div class="d-flex flex-wrap gap-2">
+      <a href="{{ url_for('student.catalog', type='all') }}" class="btn btn-sm {% if type_filter=='all' %}btn-primary-gradient{% else %}btn-outline-secondary{% endif %} px-3 fw-semibold">All Categories</a>
+      <a href="{{ url_for('student.catalog', type='Computer Lab') }}" class="btn btn-sm {% if type_filter=='Computer Lab' %}btn-primary{% else %}btn-outline-primary{% endif %} px-3 fw-semibold">Computer Labs</a>
+      <a href="{{ url_for('student.catalog', type='Classroom') }}" class="btn btn-sm {% if type_filter=='Classroom' %}btn-info text-white{% else %}btn-outline-info{% endif %} px-3 fw-semibold">Classrooms</a>
+      <a href="{{ url_for('student.catalog', type='Seminar Hall') }}" class="btn btn-sm {% if type_filter=='Seminar Hall' %}btn-success{% else %}btn-outline-success{% endif %} px-3 fw-semibold">Seminar Halls</a>
+      <a href="{{ url_for('student.catalog', type='Projector') }}" class="btn btn-sm {% if type_filter=='Projector' %}btn-warning text-dark{% else %}btn-outline-warning text-dark{% endif %} px-3 fw-semibold">Projectors</a>
+      <a href="{{ url_for('student.catalog', type='Equipment') }}" class="btn btn-sm {% if type_filter=='Equipment' %}btn-danger{% else %}btn-outline-danger{% endif %} px-3 fw-semibold">Equipment</a>
+    </div>
+  </div>
+</div>
+
+<div class="glass-card p-3 mb-4 d-flex justify-content-between align-items-center">
+  <div class="input-group" style="max-width: 360px;">
+    <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+    <input type="text" class="form-control border-start-0 py-2" id="tableSearchInput" placeholder="Instant filter by room number or name...">
+  </div>
+  <span class="text-muted fs-7 fw-bold">Displaying {{ resources_list|length }} available campus assets</span>
+</div>
+
+<div class="row g-4 mb-5">
+  {% for r in resources_list %}
+  <div class="col-md-6 col-xl-4">
+    <div class="glass-card h-100 overflow-hidden d-flex flex-column justify-content-between shadow-sm border-0">
+      <div>
+        <div style="height: 190px; position: relative;">
+          <img src="{{ r.image_url or 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600&auto=format&fit=crop&q=80' }}" alt="{{ r.name }}" class="w-100 h-100 object-fit-cover">
+          <span class="badge bg-success shadow-sm position-absolute top-0 end-0 m-3 px-3 py-1"><i class="bi bi-check-circle me-1"></i> VACANT / READY</span>
+          <span class="badge bg-dark bg-opacity-75 text-white position-absolute bottom-0 start-0 m-3 font-monospace fs-7">{{ r.resource_type }}</span>
+        </div>
+
+        <div class="p-4">
+          <h5 class="fw-bold text-primary mb-2">{{ r.name }}</h5>
+          <div class="d-flex align-items-center justify-content-between text-muted fs-7 mb-3">
+            <span><i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ r.location }}</span>
+            <span class="badge bg-light text-primary border font-monospace">{{ r.capacity }} Seats / Rigs</span>
+          </div>
+          <p class="text-muted fs-7 mb-0">{{ r.description or 'Fully configured campus resource facility available for student academic bookings and presentations.' }}</p>
+        </div>
+      </div>
+
+      <div class="p-4 bg-light border-top d-flex justify-content-between align-items-center">
+        <span class="fs-8 text-muted"><i class="bi bi-shield-check text-success me-1"></i> Collision Engine Enabled</span>
+        <a href="{{ url_for('student.book_resource', resource_id=r.id) }}" class="btn btn-primary-gradient px-4 py-2 fw-bold shadow-sm">
+          <i class="bi bi-calendar2-plus me-1"></i> Book Time Slot
+        </a>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="col-12">
+    <div class="glass-card p-5 text-center my-4 text-muted">
+      <i class="bi bi-inbox fs-1 d-block mb-3 text-secondary"></i>
+      <h4 class="fw-bold">No Resources Found Under This Filter</h4>
+      <p class="max-w-600 mx-auto">There are currently no active resources matching this category in your institution workspace. Try selecting "All Categories".</p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

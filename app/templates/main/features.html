@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Core Capabilities & Features - {{ app_name }}{% endblock %}
+
+{% block public_content %}
+<div class="container py-5 my-3">
+  <div class="text-center mb-5">
+    <span class="badge badge-saas bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2 mb-3 rounded-pill fs-7">
+      <i class="bi bi-gear-wide-connected me-1"></i> System Architecture & Capabilities
+    </span>
+    <h1 class="fw-bolder display-5 mb-3">Enterprise Features Engineered For Modern Academic Hubs</h1>
+    <p class="text-muted lead mx-auto" style="max-width: 780px;">
+      Discover how CampusHub automates resource discovery, enforces multi-role governance, and prevents scheduling chaos across disparate academic departments.
+    </p>
+  </div>
+
+  <!-- 6 Resource Types Grid -->
+  <div class="row g-4 mb-5">
+    <div class="col-12">
+      <h3 class="fw-bolder mb-4 border-bottom pb-3"><i class="bi bi-pc-display text-primary me-2"></i> Supported Campus Resource Classifications</h3>
+    </div>
+
+    <div class="col-md-4">
+      <div class="glass-card p-4 h-100 border-top border-primary border-3">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-pc-display"></i></div>
+          <h5 class="fw-bold mb-0">Computer Labs</h5>
+        </div>
+        <p class="text-muted fs-7 mb-0">High-performance deep learning workstations, AR/VR studios, and general coding hubs with customized capacity constraints.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="glass-card p-4 h-100 border-top border-info border-3">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="stat-icon bg-info bg-opacity-10 text-info"><i class="bi bi-easel"></i></div>
+          <h5 class="fw-bold mb-0">Lecture Classrooms</h5>
+        </div>
+        <p class="text-muted fs-7 mb-0">Smart amphitheaters and academic lecture rooms with tiered seating, digital podiums, and automated lighting controls.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="glass-card p-4 h-100 border-top border-success border-3">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="stat-icon bg-success bg-opacity-10 text-success"><i class="bi bi-building"></i></div>
+          <h5 class="fw-bold mb-0">Seminar Halls</h5>
+        </div>
+        <p class="text-muted fs-7 mb-0">Grand auditoriums for national conferences, cultural symposia, and thesis defense presentations seating 200+ delegates.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="glass-card p-4 h-100 border-top border-warning border-3">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="stat-icon bg-warning bg-opacity-10 text-warning"><i class="bi bi-people"></i></div>
+          <h5 class="fw-bold mb-0">Conference Rooms</h5>
+        </div>
+        <p class="text-muted fs-7 mb-0">Executive administrative council chambers and faculty boardrooms equipped with telepresence conferencing rigs.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="glass-card p-4 h-100 border-top border-danger border-3">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="stat-icon bg-danger bg-opacity-10 text-danger"><i class="bi bi-projector"></i></div>
+          <h5 class="fw-bold mb-0">Portable Projectors</h5>
+        </div>
+        <p class="text-muted fs-7 mb-0">4K Ultra-short throw laser projection carts and audio-visual presentation backpacks checkoutable for departmental events.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="glass-card p-4 h-100 border-top border-secondary border-3">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="stat-icon bg-secondary bg-opacity-10 text-secondary"><i class="bi bi-tools"></i></div>
+          <h5 class="fw-bold mb-0">Specialized Equipment</h5>
+        </div>
+        <p class="text-muted fs-7 mb-0">Digital oscilloscopes, gene sequencing analyzers, and high-frequency experimental rigs for advanced research teams.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security & Architecture Features -->
+  <div class="row g-5 align-items-center py-5">
+    <div class="col-lg-6">
+      <div class="p-4 p-md-5 rounded-4 bg-light border shadow-sm" style="background: var(--bg-card);">
+        <h6 class="text-primary text-uppercase fw-bolder fs-7 mb-2">Automated Governance</h6>
+        <h3 class="fw-bold mb-4">Intelligent Collision Detection Engine</h3>
+        <p class="text-muted mb-4">
+          When a faculty member or student attempts to book an asset, our backend engine performs instantaneous boundary interval comparisons:
+        </p>
+        <div class="p-3 rounded-3 bg-dark text-white font-monospace fs-7 mb-4 shadow-sm">
+          <code>start_time &lt; existing.end_time AND end_time &gt; existing.start_time</code>
+        </div>
+        <p class="text-muted mb-0">
+          If any overlapping temporal slot is identified under approved or pending status, the reservation is intercepted with actionable advisory diagnostics.
+        </p>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="d-flex flex-column gap-4">
+        <div class="glass-card p-4">
+          <h5 class="fw-bold"><i class="bi bi-shield-lock text-success me-2"></i> Military-Grade SQL Protection & CSRF</h5>
+          <p class="text-muted fs-7 mb-0">Every input is cryptographically sanitized via Flask-WTF tokens and SQLAlchemy parameterized statements, annihilating SQL injection vectors.</p>
+        </div>
+        <div class="glass-card p-4">
+          <h5 class="fw-bold"><i class="bi bi-bar-chart-line text-info me-2"></i> Real-Time Analytical Dashboards</h5>
+          <p class="text-muted fs-7 mb-0">College Admins view Chart.js powered visualization breakdowns of utilization rates, departmental activity distribution, and peak booking trends.</p>
+        </div>
+        <div class="glass-card p-4">
+          <h5 class="fw-bold"><i class="bi bi-envelope-paper-heart text-warning me-2"></i> One-Time Password & OAuth Identity</h5>
+          <p class="text-muted fs-7 mb-0">Simulate OAuth 2.0 single sign-on or request instant 6-digit numeric OTP authentication tokens delivered directly to your academic inbox or terminal.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

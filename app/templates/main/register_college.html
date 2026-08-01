@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Onboard Institution - {{ app_name }}{% endblock %}
+
+{% block public_content %}
+<div class="container py-5 my-2">
+  <div class="row justify-content-center">
+    <div class="col-lg-9 col-md-11">
+      <div class="glass-card p-4 p-md-5 shadow-lg" style="border-radius: 22px;">
+        
+        <div class="text-center mb-5 pb-3 border-bottom border-secondary border-opacity-25">
+          <span class="badge badge-saas bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-4 py-2 mb-3 rounded-pill">
+            <i class="bi bi-building-add me-2"></i> Step 1 of 2: Institution Registration Wizard
+          </span>
+          <h2 class="fw-bolder tracking-tight">Register Your College Workspace</h2>
+          <p class="text-muted fs-7 max-w-600 mx-auto">
+            Create an isolated, cryptographically secured multi-tenant workspace for your university. Once verified by our Platform Superadmin, your administrative dashboard activates instantly.
+          </p>
+        </div>
+
+        <form method="POST" action="{{ url_for('main.register_college') }}">
+          {{ form.hidden_tag() }}
+
+          <!-- Institution Information -->
+          <div class="mb-5">
+            <h5 class="fw-bold text-primary mb-3"><i class="bi bi-bank me-2"></i> 1. Institutional Identity & Location</h5>
+            <div class="row g-3">
+              <div class="col-md-8">
+                <label class="form-label fw-semibold fs-7 text-muted">{{ form.name.label.text }} <span class="text-danger">*</span></label>
+                {{ form.name(class="form-control py-2", placeholder="e.g. Indian Institute of Technology, Delhi") }}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold fs-7 text-muted">{{ form.code.label.text }} <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light fw-bold text-primary">#</span>
+                  {{ form.code(class="form-control py-2 text-uppercase fw-bold", placeholder="IITD / MIT") }}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold fs-7 text-muted">{{ form.email.label.text }} <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light text-muted"><i class="bi bi-envelope-at-fill"></i></span>
+                  {{ form.email(class="form-control py-2", placeholder="registrar@iitd.ac.in") }}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold fs-7 text-muted">{{ form.phone.label.text }} <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light text-muted"><i class="bi bi-telephone-inbound-fill"></i></span>
+                  {{ form.phone(class="form-control py-2", placeholder="+91 11 2659 7135") }}
+                </div>
+              </div>
+              <div class="col-md-8">
+                <label class="form-label fw-semibold fs-7 text-muted">{{ form.address.label.text }} <span class="text-danger">*</span></label>
+                {{ form.address(class="form-control py-2", rows="2", placeholder="Hauz Khas, New Delhi, Delhi 110016") }}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold fs-7 text-muted">{{ form.website.label.text }}</label>
+                {{ form.website(class="form-control py-2", placeholder="https://home.iitd.ac.in") }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Designated College Admin Account -->
+          <div class="mb-4">
+            <h5 class="fw-bold text-primary mb-3"><i class="bi bi-person-shield me-2"></i> 2. Founding College Administrator Account</h5>
+            <div class="alert alert-info border-0 shadow-sm d-flex align-items-center p-3 mb-3 rounded-3" role="alert" style="background: rgba(14, 165, 233, 0.1); color: var(--text-primary);">
+              <i class="bi bi-info-circle-fill text-info fs-4 me-3"></i>
+              <div class="fs-7">
+                This user will receive total administrative privilege over the university's departments, faculty directory, and campus resources upon HQ approval.
+              </div>
+            </div>
+            
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold fs-7 text-muted">{{ form.admin_first_name.label.text }} <span class="text-danger">*</span></label>
+                {{ form.admin_first_name(class="form-control py-2", placeholder="Aravind") }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold fs-7 text-muted">{{ form.admin_last_name.label.text }} <span class="text-danger">*</span></label>
+                {{ form.admin_last_name(class="form-control py-2", placeholder="Kumar") }}
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-semibold fs-7 text-muted">{{ form.admin_email.label.text }} <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light text-muted"><i class="bi bi-key-fill"></i></span>
+                  {{ form.admin_email(class="form-control py-2", placeholder="admin.iitd@campushub.edu") }}
+                </div>
+                <div class="form-text fs-7 mt-1 text-muted"><i class="bi bi-shield-check me-1"></i> A default temporary password (<strong>admin123</strong>) will be assigned upon workspace activation.</div>
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-4 border-secondary border-opacity-25">
+
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <a href="{{ url_for('main.landing') }}" class="btn btn-outline-secondary px-4 py-2 fw-semibold">
+              <i class="bi bi-arrow-left me-1"></i> Return to Homepage
+            </a>
+            <button type="submit" class="btn btn-primary-gradient py-3 px-5 fw-bold fs-6 shadow-lg">
+              <i class="bi bi-check-circle-fill me-2"></i> Submit Institution Application
+            </button>
+          </div>
+
+        </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

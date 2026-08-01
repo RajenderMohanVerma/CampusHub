@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Server Error (500) - {{ app_name }}{% endblock %}
+
+{% block public_content %}
+<div class="container py-5 my-5 text-center">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="glass-card p-5 rounded-4 shadow-lg border-warning border-opacity-25">
+        <h1 class="display-1 fw-bolder text-warning mb-2">500</h1>
+        <h3 class="fw-bold mb-3">Internal System Malfunction</h3>
+        <p class="text-muted mb-4">An automated exception occurred while executing this database transaction. Our DevOps engineering team has been alerted via telemetry logs.</p>
+        <a href="{{ url_for('main.landing') }}" class="btn btn-primary-gradient px-4 py-2 fw-bold">
+          <i class="bi bi-arrow-counterclockwise me-2"></i> Restart Portal Session
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

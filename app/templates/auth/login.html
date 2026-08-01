@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block title %}Sign In - {{ app_name }}{% endblock %}
+
+{% block public_content %}
+<div class="container py-5 my-3">
+  <div class="row justify-content-center align-items-center g-5">
+    
+    <!-- Login Controls (Left Column) -->
+    <div class="col-lg-5 col-md-8">
+      <div class="glass-card p-4 p-md-5 shadow-lg position-relative" style="border-radius: 20px;">
+        <div class="text-center mb-4">
+          <div class="d-inline-flex align-items-center justify-content-center text-white mb-3 shadow-md" style="width: 54px; height: 54px; border-radius: 16px; background: linear-gradient(135deg, #6366f1, #3b82f6);">
+            <i class="bi bi-shield-lock-fill fs-3"></i>
+          </div>
+          <h3 class="fw-bolder tracking-tight">Welcome Back</h3>
+          <p class="text-muted fs-7">Sign in to access your secure college campus workspace</p>
+        </div>
+
+        <!-- Authentication Tabs -->
+        <ul class="nav nav-pills nav-fill mb-4 gap-2 bg-light p-1 rounded-3 border" id="authTab" role="tablist" style="background: rgba(0,0,0,0.03) !important;">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-bold py-2 rounded-2 fs-7" id="password-tab" data-bs-toggle="tab" data-bs-target="#password-pane" type="button" role="tab">
+              <i class="bi bi-key-fill me-1"></i> Password
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold py-2 rounded-2 fs-7" id="otp-tab" data-bs-toggle="tab" data-bs-target="#otp-pane" type="button" role="tab">
+              <i class="bi bi-envelope-check-fill me-1"></i> Email OTP
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="authTabContent">
+          
+          <!-- Standard Password Login Tab -->
+          <div class="tab-pane fade show active" id="password-pane" role="tabpanel" tabindex="0">
+            <form method="POST" action="{{ url_for('auth.login') }}">
+              {{ form.hidden_tag() }}
+              
+              <div class="mb-3">
+                <label class="form-label fw-semibold fs-7 text-muted">{{ form.email.label.text }}</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-person-fill"></i></span>
+                  {{ form.email(class="form-control border-start-0 py-2", placeholder="name@college.edu", id="loginEmailInput") }}
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-semibold fs-7 text-muted">{{ form.password.label.text }}</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-lock-fill"></i></span>
+                  {{ form.password(class="form-control border-start-0 py-2", placeholder="••••••••", id="loginPassInput") }}
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center mb-4 fs-7">
+                <div class="form-check">
+                  {{ form.remember(class="form-check-input") }}
+                  <label class="form-check-label text-muted" for="remember">Remember device</label>
+                </div>
+                <a href="#" class="text-primary text-decoration-none fw-medium">Forgot Password?</a>
+              </div>
+
+              <button type="submit" class="btn btn-primary-gradient w-100 py-2 fw-bold fs-6">
+                <i class="bi bi-box-arrow-in-right me-2"></i> {{ form.submit.label.text }}
+              </button>
+            </form>
+          </div>
+
+          <!-- Email OTP Login Tab -->
+          <div class="tab-pane fade" id="otp-pane" role="tabpanel" tabindex="0">
+            <form method="POST" action="{{ url_for('auth.request_otp') }}">
+              {{ otp_form.hidden_tag() }}
+              <div class="mb-4">
+                <label class="form-label fw-semibold fs-7 text-muted">{{ otp_form.email.label.text }}</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-envelope-paper"></i></span>
+                  {{ otp_form.email(class="form-control border-start-0 py-2", placeholder="your.name@iitd.ac.in") }}
+                </div>
+                <div class="form-text mt-2 fs-7 text-muted"><i class="bi bi-info-circle me-1"></i> A secure 6-digit verification code will be generated.</div>
+              </div>
+              <button type="submit" class="btn btn-primary-gradient w-100 py-2 fw-bold fs-6">
+                <i class="bi bi-send-check me-2"></i> {{ otp_form.submit.label.text }}
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+        <div class="d-flex align-items-center my-4">
+          <hr class="flex-grow-1 border-secondary border-opacity-25">
+          <span class="px-3 text-muted fs-7 fw-bold text-uppercase">OR</span>
+          <hr class="flex-grow-1 border-secondary border-opacity-25">
+        </div>
+
+        <!-- Simulated Google OAuth Login -->
+        <a href="{{ url_for('auth.google_simulate') }}" class="btn btn-outline-secondary w-100 py-2 d-flex align-items-center justify-content-center gap-3 fw-semibold shadow-sm" style="border-radius: 10px;">
+          <i class="bi bi-google text-danger fs-5"></i> Sign in with Google Account
+        </a>
+
+        <div class="text-center mt-4 pt-2 fs-7 text-muted border-top border-secondary border-opacity-10">
+          New student or faculty? <a href="{{ url_for('auth.register') }}" class="fw-bold text-primary">Register Account</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Demo Login Selector (Right Column) -->
+    <div class="col-lg-5 col-md-8">
+      <div class="p-4 rounded-4 text-white position-relative overflow-hidden shadow-lg" style="background: linear-gradient(145deg, #1e1e2d 0%, #111827 100%); border: 1px solid rgba(255,255,255,0.1);">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <span class="badge bg-primary bg-opacity-25 text-primary py-2 px-3 rounded-pill fw-bold border border-primary border-opacity-50">
+            <i class="bi bi-lightning-charge-fill me-1"></i> Instant Demo Mode
+          </span>
+          <h5 class="fw-bolder mb-0 text-white">One-Click Role Tester</h5>
+        </div>
+        <p class="text-white-50 fs-7 mb-4">
+          Click any persona below to automatically fill credentials into the form and test multi-college tenancy immediately:
+        </p>
+
+        <div class="d-flex flex-column gap-3">
+          
+          <div class="p-3 rounded-3 d-flex justify-content-between align-items-center cursor-pointer demo-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);" onclick="fillCreds('superadmin@campushub.edu', 'admin123')">
+            <div class="d-flex align-items-center gap-3">
+              <div class="stat-icon bg-danger bg-opacity-25 text-danger" style="width: 44px; height: 44px; font-size: 1.3rem;">👑</div>
+              <div>
+                <h6 class="text-white fw-bold mb-0 fs-6">Platform Superadmin</h6>
+                <small class="text-white-50" style="font-size: 0.75rem;">superadmin@campushub.edu • Multi-University Control</small>
+              </div>
+            </div>
+            <span class="btn btn-sm btn-outline-light rounded-pill px-3">Use <i class="bi bi-arrow-right-short"></i></span>
+          </div>
+
+          <div class="p-3 rounded-3 d-flex justify-content-between align-items-center cursor-pointer demo-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);" onclick="fillCreds('admin.iitd@campushub.edu', 'admin123')">
+            <div class="d-flex align-items-center gap-3">
+              <div class="stat-icon bg-primary bg-opacity-25 text-primary" style="width: 44px; height: 44px; font-size: 1.3rem;">👨‍💼</div>
+              <div>
+                <h6 class="text-white fw-bold mb-0 fs-6">College Admin (IIT Delhi)</h6>
+                <small class="text-white-50" style="font-size: 0.75rem;">admin.iitd@campushub.edu • IITD Workspace</small>
+              </div>
+            </div>
+            <span class="btn btn-sm btn-outline-primary rounded-pill px-3">Use <i class="bi bi-arrow-right-short"></i></span>
+          </div>
+
+          <div class="p-3 rounded-3 d-flex justify-content-between align-items-center cursor-pointer demo-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);" onclick="fillCreds('admin.stanford@campushub.edu', 'admin123')">
+            <div class="d-flex align-items-center gap-3">
+              <div class="stat-icon bg-warning bg-opacity-25 text-warning" style="width: 44px; height: 44px; font-size: 1.3rem;">🏫</div>
+              <div>
+                <h6 class="text-white fw-bold mb-0 fs-6">College Admin (Stanford)</h6>
+                <small class="text-white-50" style="font-size: 0.75rem;">admin.stanford@campushub.edu • STAN Workspace</small>
+              </div>
+            </div>
+            <span class="btn btn-sm btn-outline-warning rounded-pill px-3">Use <i class="bi bi-arrow-right-short"></i></span>
+          </div>
+
+          <div class="p-3 rounded-3 d-flex justify-content-between align-items-center cursor-pointer demo-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);" onclick="fillCreds('faculty.iitd@campushub.edu', 'faculty123')">
+            <div class="d-flex align-items-center gap-3">
+              <div class="stat-icon bg-success bg-opacity-25 text-success" style="width: 44px; height: 44px; font-size: 1.3rem;">🧑‍🏫</div>
+              <div>
+                <h6 class="text-white fw-bold mb-0 fs-6">Faculty Member (IITD)</h6>
+                <small class="text-white-50" style="font-size: 0.75rem;">Dr. Rajesh Sharma • CSE Department</small>
+              </div>
+            </div>
+            <span class="btn btn-sm btn-outline-success rounded-pill px-3">Use <i class="bi bi-arrow-right-short"></i></span>
+          </div>
+
+          <div class="p-3 rounded-3 d-flex justify-content-between align-items-center cursor-pointer demo-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);" onclick="fillCreds('student.iitd@campushub.edu', 'student123')">
+            <div class="d-flex align-items-center gap-3">
+              <div class="stat-icon bg-info bg-opacity-25 text-info" style="width: 44px; height: 44px; font-size: 1.3rem;">🎓</div>
+              <div>
+                <h6 class="text-white fw-bold mb-0 fs-6">Student (IITD MCA)</h6>
+                <small class="text-white-50" style="font-size: 0.75rem;">Vikram Verma • Resource Requester</small>
+              </div>
+            </div>
+            <span class="btn btn-sm btn-outline-info rounded-pill px-3">Use <i class="bi bi-arrow-right-short"></i></span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script>
+function fillCreds(email, pass) {
+  const emailIn = document.getElementById('loginEmailInput');
+  const passIn = document.getElementById('loginPassInput');
+  if (emailIn && passIn) {
+    emailIn.value = email;
+    passIn.value = pass;
+    // Highlight effect
+    emailIn.style.transition = "all 0.3s";
+    emailIn.style.borderColor = "#6366f1";
+    passIn.style.borderColor = "#6366f1";
+    setTimeout(() => {
+      emailIn.style.borderColor = "";
+      passIn.style.borderColor = "";
+    }, 1000);
+  }
+}
+</script>
+{% endblock %}

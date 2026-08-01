@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}System Audit Telemetry - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+  <div>
+    <h3 class="fw-bolder mb-1"><i class="bi bi-shield-check text-success me-2"></i> Systemic Security & Audit Telemetry</h3>
+    <p class="text-muted fs-7 mb-0">Immutable tracking of user authentication, workspace approvals, and resource allocation actions across all institutions.</p>
+  </div>
+  <div class="input-group" style="max-width: 320px;">
+    <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+    <input type="text" class="form-control border-start-0 py-1" id="tableSearchInput" placeholder="Filter audit trail...">
+  </div>
+</div>
+
+<div class="glass-card overflow-hidden shadow-sm">
+  <div class="table-responsive">
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th>Event ID</th>
+          <th>UTC Timestamp</th>
+          <th>Action Type</th>
+          <th>User Account</th>
+          <th>Tenant Scope</th>
+          <th>Diagnostic Log Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr>
+          <td class="font-monospace fw-bold text-muted fs-7">#LOG-{{ log.id }}</td>
+          <td class="font-monospace fs-7">{{ log.timestamp|format_timestamp }}</td>
+          <td>
+            <span class="badge badge-saas {% if 'LOGIN' in log.action %}bg-primary bg-opacity-10 text-primary{% elif 'APPROVED' in log.action or 'REGISTER' in log.action %}bg-success bg-opacity-10 text-success{% elif 'REJECT' in log.action or 'SUSPEND' in log.action %}bg-danger bg-opacity-10 text-danger{% else %}bg-info bg-opacity-10 text-info{% endif %} px-2">
+              {{ log.action }}
+            </span>
+          </td>
+          <td class="fw-medium fs-7">{{ log.user.email if log.user else 'Automated System Engine' }}</td>
+          <td>
+            {% if log.college %}
+              <span class="badge bg-light text-primary border font-monospace">{{ log.college.code }}</span>
+            {% else %}
+              <span class="badge bg-dark text-white font-monospace">Superadmin HQ</span>
+            {% endif %}
+          </td>
+          <td class="fs-7 text-secondary">{{ log.details }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="6" class="text-center py-5 text-muted">No system audit records logged yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

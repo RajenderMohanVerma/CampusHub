@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Contact Support HQ - {{ app_name }}{% endblock %}
+
+{% block public_content %}
+<div class="container py-5 my-3">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <div class="glass-card p-4 p-md-5 shadow-lg" style="border-radius: 20px;">
+        <div class="text-center mb-4 pb-2 border-bottom">
+          <div class="d-inline-flex align-items-center justify-content-center text-white mb-3 shadow-md" style="width: 54px; height: 54px; border-radius: 16px; background: linear-gradient(135deg, #0ea5e9, #6366f1);">
+            <i class="bi bi-headset fs-3"></i>
+          </div>
+          <h3 class="fw-bolder">CampusHub Support Desk</h3>
+          <p class="text-muted fs-7 mb-0">Have technical queries or need workspace customization? Our engineers are at your service.</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('main.contact') }}">
+          {{ form.hidden_tag() }}
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.full_name.label.text }}</label>
+              {{ form.full_name(class="form-control py-2", placeholder="Vikram Verma") }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.email.label.text }}</label>
+              {{ form.email(class="form-control py-2", placeholder="admin@iitd.ac.in") }}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.subject.label.text }}</label>
+              {{ form.subject(class="form-control py-2", placeholder="E.g., Onboarding assistance for new lab equipment") }}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold fs-7 text-muted">{{ form.message.label.text }}</label>
+              {{ form.message(class="form-control py-2", rows="5", placeholder="Describe your technical requirement or inquiry in detail...") }}
+            </div>
+          </div>
+          
+          <button type="submit" class="btn btn-primary-gradient w-100 py-3 fw-bold fs-6 mt-2 shadow-md">
+            <i class="bi bi-send-fill me-2"></i> {{ form.submit.label.text }}
+          </button>
+        </form>
+        
+        <div class="row text-center mt-5 pt-4 border-top border-secondary border-opacity-10 g-3">
+          <div class="col-md-4">
+            <h6 class="fw-bold fs-7 mb-1"><i class="bi bi-geo-alt text-danger me-1"></i> HQ Address</h6>
+            <small class="text-muted">Tech Innovation Towers, New Delhi</small>
+          </div>
+          <div class="col-md-4">
+            <h6 class="fw-bold fs-7 mb-1"><i class="bi bi-envelope-check text-primary me-1"></i> Support Email</h6>
+            <small class="text-muted">support@campushub.edu</small>
+          </div>
+          <div class="col-md-4">
+            <h6 class="fw-bold fs-7 mb-1"><i class="bi bi-clock text-success me-1"></i> Operation Hours</h6>
+            <small class="text-muted">24/7 Automated Monitoring</small>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
