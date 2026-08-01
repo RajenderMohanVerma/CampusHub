@@ -17,7 +17,7 @@ with app.app_context():
     # 1. Create Platform Super Admin (No College)
     print("[STEP 1] Creating Platform Admin...")
     p_admin_user = User(
-        email="superadmin@campushub.edu",
+        email="superadmin@edu",
         first_name="Rajender",
         last_name="Mohan",
         phone="+91 9876543210",
@@ -72,7 +72,7 @@ with app.app_context():
     # 3. Create College Admins
     print("[STEP 3] Creating College Admins...")
     ca_user1 = User(
-        email="admin.iitd@campushub.edu",
+        email="admin.iitd@edu",
         first_name="Aravind",
         last_name="Kumar",
         phone="+91 9811112222",
@@ -83,7 +83,7 @@ with app.app_context():
     ca_user1.set_password("admin123")
     
     ca_user2 = User(
-        email="admin.stanford@campushub.edu",
+        email="admin.stanford@edu",
         first_name="Jennifer",
         last_name="Gates",
         phone="+1 650-555-0199",
@@ -114,7 +114,7 @@ with app.app_context():
     # 5. Create Faculty
     print("[STEP 5] Creating Faculty Members...")
     fac_user1 = User(
-        email="faculty.iitd@campushub.edu",
+        email="faculty.iitd@edu",
         first_name="Dr. Rajesh",
         last_name="Sharma",
         phone="+91 9988776655",
@@ -134,7 +134,7 @@ with app.app_context():
     fac_user2.set_password("faculty123")
     
     fac_user3 = User(
-        email="faculty.stanford@campushub.edu",
+        email="faculty.stanford@edu",
         first_name="Dr. Robert",
         last_name="Oppenheimer",
         phone="+1 415-555-8888",
@@ -153,7 +153,7 @@ with app.app_context():
     # 6. Create Students
     print("[STEP 6] Creating Students...")
     stud_user1 = User(
-        email="student.iitd@campushub.edu",
+        email="student.iitd@edu",
         first_name="Vikram",
         last_name="Verma",
         phone="+91 9777788888",
@@ -163,7 +163,7 @@ with app.app_context():
     stud_user1.set_password("student123")
     
     stud_user2 = User(
-        email="sneha.iitd@campushub.edu",
+        email="sneha.iitd@edu",
         first_name="Sneha",
         last_name="Kapoor",
         phone="+91 9777788899",
@@ -357,9 +357,9 @@ with app.app_context():
     db.session.commit()
     print("[SUCCESS] CampusHub Database Seeding completed successfully with enterprise data!")
     print("\n--- TEST LOGIN CREDENTIALS ---")
-    print("Platform Admin : superadmin@campushub.edu / admin123")
-    print("IIT Delhi Admin: admin.iitd@campushub.edu   / admin123")
-    print("Stanford Admin : admin.stanford@campushub.edu / admin123")
-    print("Faculty (IITD) : faculty.iitd@campushub.edu / faculty123")
-    print("Student (IITD) : student.iitd@campushub.edu / student123")
+    print("Platform Admin : superadmin@edu / admin123")
+    print("IIT Delhi Admin: admin.iitd@edu   / admin123")
+    print("Stanford Admin : admin.stanford@edu / admin123")
+    print("Faculty (IITD) : faculty.iitd@edu / faculty123")
+    print("Student (IITD) : student.iitd@edu / student123")
     print("--------------------------------")
