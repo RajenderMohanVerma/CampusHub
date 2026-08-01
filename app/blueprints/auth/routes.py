@@ -63,7 +63,17 @@ def request_otp():
             print(f"\n==============================================")
             print(f"📧 [DEV EMAIL OTP SIMULATOR] For: {user.email}")
             print(f"🔑 ONE-TIME VERIFICATION CODE: >> {code} <<")
-            print(f"⏰ Valid until: {expiry.strftime('%H:%M:%S')} UTC")
+            # Display OTP expiry in India Standard Time for local clarity
+            try:
+                from zoneinfo import ZoneInfo
+                if expiry.tzinfo is None:
+                    expiry_tz = expiry.replace(tzinfo=ZoneInfo('UTC'))
+                else:
+                    expiry_tz = expiry
+                expiry_ist = expiry_tz.astimezone(ZoneInfo('Asia/Kolkata'))
+                print(f"⏰ Valid until (IST): {expiry_ist.strftime('%H:%M:%S %Z')}")
+            except Exception:
+                print(f"⏰ Valid until: {expiry.strftime('%H:%M:%S')} UTC")
             print(f"==============================================\n")
             flash(f"[Dev simulation] OTP sent! Your code is {code} (Check console logs).", "info")
         else:

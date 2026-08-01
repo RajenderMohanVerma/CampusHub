@@ -20,24 +20,24 @@
     <a class="nav-link-custom {% if request.endpoint == 'college_admin.dashboard' %}active{% endif %}" href="{{ url_for('college_admin.dashboard') }}">
       <i class="bi bi-speedometer2"></i> <span class="sidebar-menu-span">Executive Summary</span>
     </a>
-    <a class="nav-link-custom {% if 'resource' in request.endpoint %}active{% endif %}" href="{{ url_for('college_admin.resources') }}">
+    <a class="nav-link-custom {% if request.endpoint and 'resource' in request.endpoint %}active{% endif %}" href="{{ url_for('college_admin.resources') }}">
       <i class="bi bi-pc-display"></i> <span class="sidebar-menu-span">Manage Resources</span>
     </a>
-    <a class="nav-link-custom {% if 'booking' in request.endpoint %}active{% endif %}" href="{{ url_for('college_admin.bookings') }}">
+    <a class="nav-link-custom {% if request.endpoint and 'booking' in request.endpoint %}active{% endif %}" href="{{ url_for('college_admin.bookings') }}">
       <i class="bi bi-calendar-check-fill"></i> <span class="sidebar-menu-span">Booking Approvals</span>
     </a>
     
     <div class="sidebar-heading">Academic Management</div>
-    <a class="nav-link-custom {% if 'department' in request.endpoint %}active{% endif %}" href="{{ url_for('college_admin.departments') }}">
+    <a class="nav-link-custom {% if request.endpoint and 'department' in request.endpoint %}active{% endif %}" href="{{ url_for('college_admin.departments') }}">
       <i class="bi bi-diagram-2-fill"></i> <span class="sidebar-menu-span">Departments</span>
     </a>
-    <a class="nav-link-custom {% if 'faculty' in request.endpoint %}active{% endif %}" href="{{ url_for('college_admin.faculty_list') }}">
+    <a class="nav-link-custom {% if request.endpoint and 'faculty' in request.endpoint %}active{% endif %}" href="{{ url_for('college_admin.faculty_list') }}">
       <i class="bi bi-person-video3"></i> <span class="sidebar-menu-span">Faculty Directory</span>
     </a>
-    <a class="nav-link-custom {% if 'student' in request.endpoint %}active{% endif %}" href="{{ url_for('college_admin.student_list') }}">
+    <a class="nav-link-custom {% if request.endpoint and 'student' in request.endpoint %}active{% endif %}" href="{{ url_for('college_admin.student_list') }}">
       <i class="bi bi-people-fill"></i> <span class="sidebar-menu-span">Student Directory</span>
     </a>
-    <a class="nav-link-custom {% if 'report' in request.endpoint %}active{% endif %}" href="{{ url_for('college_admin.reports') }}">
+    <a class="nav-link-custom {% if request.endpoint and 'report' in request.endpoint %}active{% endif %}" href="{{ url_for('college_admin.reports') }}">
       <i class="bi bi-graph-up-arrow"></i> <span class="sidebar-menu-span">Utilization Reports</span>
     </a>
 
@@ -46,16 +46,16 @@
     <a class="nav-link-custom {% if request.endpoint == 'faculty.dashboard' %}active{% endif %}" href="{{ url_for('faculty.dashboard') }}">
       <i class="bi bi-house-door-fill"></i> <span class="sidebar-menu-span">My Dashboard</span>
     </a>
-    <a class="nav-link-custom {% if request.endpoint == 'faculty.book_resource' %}active{% endif %}" href="{{ url_for('faculty.book_resource') }}">
+    <a class="nav-link-custom {% if request.endpoint and ('book' in request.endpoint or request.endpoint == 'faculty.catalog') %}active{% endif %}" href="{{ url_for('faculty.catalog') }}">
       <i class="bi bi-plus-circle-fill text-success"></i> <span class="sidebar-menu-span">Book Resource</span>
     </a>
     <a class="nav-link-custom {% if request.endpoint == 'faculty.my_bookings' %}active{% endif %}" href="{{ url_for('faculty.my_bookings') }}">
       <i class="bi bi-calendar3"></i> <span class="sidebar-menu-span">My Bookings</span>
     </a>
-    <a class="nav-link-custom {% if request.endpoint == 'faculty.schedule' %}active{% endif %}" href="{{ url_for('faculty.schedule') }}">
+    <a class="nav-link-custom {% if request.endpoint == 'faculty.my_bookings' %}active{% endif %}" href="{{ url_for('faculty.my_bookings') }}">
       <i class="bi bi-clock-history"></i> <span class="sidebar-menu-span">Campus Schedule</span>
     </a>
-    <a class="nav-link-custom {% if request.endpoint == 'faculty.notifications' %}active{% endif %}" href="{{ url_for('faculty.notifications') }}">
+    <a class="nav-link-custom {% if request.endpoint and request.endpoint.startswith('notifications') %}active{% endif %}" href="{{ url_for('notifications.inbox') }}">
       <i class="bi bi-bell-fill"></i> <span class="sidebar-menu-span">Notifications</span>
     </a>
 
@@ -64,13 +64,13 @@
     <a class="nav-link-custom {% if request.endpoint == 'student.dashboard' %}active{% endif %}" href="{{ url_for('student.dashboard') }}">
       <i class="bi bi-compass-fill"></i> <span class="sidebar-menu-span">Explore Resources</span>
     </a>
-    <a class="nav-link-custom {% if request.endpoint == 'student.book_resource' %}active{% endif %}" href="{{ url_for('student.book_resource') }}">
+    <a class="nav-link-custom {% if request.endpoint and ('book' in request.endpoint or request.endpoint == 'student.catalog') %}active{% endif %}" href="{{ url_for('student.catalog') }}">
       <i class="bi bi-calendar-plus-fill text-primary"></i> <span class="sidebar-menu-span">Request Resource</span>
     </a>
-    <a class="nav-link-custom {% if request.endpoint == 'student.booking_history' %}active{% endif %}" href="{{ url_for('student.booking_history') }}">
+    <a class="nav-link-custom {% if request.endpoint == 'student.my_bookings' %}active{% endif %}" href="{{ url_for('student.my_bookings') }}">
       <i class="bi bi-journal-check"></i> <span class="sidebar-menu-span">Booking History</span>
     </a>
-    <a class="nav-link-custom {% if request.endpoint == 'student.notifications' %}active{% endif %}" href="{{ url_for('student.notifications') }}">
+    <a class="nav-link-custom {% if request.endpoint and request.endpoint.startswith('notifications') %}active{% endif %}" href="{{ url_for('notifications.inbox') }}">
       <i class="bi bi-chat-left-dots-fill"></i> <span class="sidebar-menu-span">Alerts & Status</span>
     </a>
     {% endif %}

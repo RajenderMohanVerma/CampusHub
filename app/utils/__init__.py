@@ -5,6 +5,7 @@ from flask_login import current_user
 import random
 import string
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 
 def role_required(*roles):
@@ -76,11 +77,27 @@ def format_timestamp(dt):
     """Jinja filters for elegant date/time representation."""
     if not dt:
         return ""
-    return dt.strftime('%b %d, %Y • %I:%M %p')
+    # Convert naive datetimes (assumed UTC) to India Standard Time for display
+    try:
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=ZoneInfo('UTC'))
+        ist = dt.astimezone(ZoneInfo('Asia/Kolkata'))
+        return ist.strftime('%b %d, %Y • %I:%M %p')
+    except Exception:
+        # Fallback to naive formatting
+        return dt.strftime('%b %d, %Y • %I:%M %p')
 
 
 def format_date(dt):
     """Jinja filters for date representation."""
     if not dt:
         return ""
-    return dt.strftime('%B %d, %Y')
+    try:
+        if hasattr(dt, 'tzinfo') and dt.tzinfo is not None:
+            # Convert to IST and format date portion
+            ist = dt.astimezone(ZoneInfo('Asia/Kolkata'))
+            return ist.strftime('%B %d, %Y')
+        # If dt is date or naive datetime, just format date
+        return dt.strftime('%B %d, %Y')
+    except Exception:
+        return dt.strftime('%B %d, %Y')
