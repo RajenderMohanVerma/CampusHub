@@ -10,7 +10,7 @@
   <div class="d-flex gap-2">
     <a href="{{ url_for('platform_admin.colleges', status='pending') }}" class="btn btn-warning btn-sm fw-bold px-3 d-flex align-items-center">
       <i class="bi bi-hourglass-split me-1"></i> Pending Approvals ({{ pending_colleges }})
-    </a>
+          <span class="text-uppercase fw-bold fs-7 text-muted">Total Institutions</span>
     <a href="{{ url_for('platform_admin.reports') }}" class="btn btn-outline-primary btn-sm fw-bold px-3">
       <i class="bi bi-bar-chart-fill me-1"></i> HQ Analytics
     </a>
@@ -20,7 +20,7 @@
 <!-- Key Performance Indicators (KPIs) -->
 <div class="row g-4 mb-5">
   <div class="col-xl-3 col-md-6">
-    <div class="glass-card stat-card h-100 border-start border-primary border-4">
+          <span class="text-uppercase fw-bold fs-7 text-muted">Pending Applications</span>
       <div class="d-flex justify-content-between align-items-center mb-3">
         <span class="text-uppercase fw-bold fs-7 text-muted">Total Institutions</span>
         <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-buildings-fill"></i></div>
@@ -30,7 +30,7 @@
     </div>
   </div>
 
-  <div class="col-xl-3 col-md-6">
+          <span class="text-uppercase fw-bold fs-7 text-muted">Global Campus Assets</span>
     <div class="glass-card stat-card h-100 border-start border-warning border-4">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <span class="text-uppercase fw-bold fs-7 text-muted">Pending Applications</span>
@@ -40,7 +40,7 @@
       <span class="text-muted fs-7">Requires HQ verification</span>
     </div>
   </div>
-
+          <span class="text-uppercase fw-bold fs-7 text-muted">Active Users Global</span>
   <div class="col-xl-3 col-md-6">
     <div class="glass-card stat-card h-100 border-start border-info border-4">
       <div class="d-flex justify-content-between align-items-center mb-3">

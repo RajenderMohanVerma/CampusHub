@@ -57,6 +57,11 @@ document.addEventListener("DOMContentLoaded", function () {
   );
   toastList.forEach((toast) => toast.show());
 
+  // 3b. Small page transition - fade in body
+  document.body.style.opacity = 0;
+  document.body.style.transition = 'opacity 320ms ease-out';
+  requestAnimationFrame(() => { document.body.style.opacity = 1; });
+
   // 4. Instant Real-time Table Search Filter
   const tableSearchInput = document.getElementById("tableSearchInput");
   if (tableSearchInput) {
@@ -92,4 +97,24 @@ document.addEventListener("DOMContentLoaded", function () {
         // Silently swallow fetch failure on unauthenticated or session expiry states
       });
   }
+
+  // 7. Initialize marquee tickers
+  const marquees = document.querySelectorAll('.marquee');
+  marquees.forEach((m) => {
+    if (!m.querySelector('span')) return;
+    // pause on hover and resume on leave
+    m.addEventListener('mouseenter', () => { m.style.animationPlayState = 'paused'; });
+    m.addEventListener('mouseleave', () => { m.style.animationPlayState = 'running'; });
+  });
+
+  // 8. Utility: show skeleton for a container for a minimum duration
+  window.showSkeleton = function(containerSelector, duration = 600) {
+    const container = document.querySelector(containerSelector);
+    if (!container) return;
+    const skeleton = document.createElement('div');
+    skeleton.className = 'skeleton p-3';
+    skeleton.style.minHeight = '80px';
+    container.prepend(skeleton);
+    setTimeout(() => skeleton.remove(), duration);
+  };
 });

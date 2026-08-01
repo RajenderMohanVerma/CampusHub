@@ -35,7 +35,7 @@
       </thead>
       <tbody>
         {% for b in bookings_list %}
-        <tr>
+        <tr class="hover-lift">
           <td class="font-monospace fw-bold text-primary fs-7">#BKG-{{ b.id }}</td>
           <td>
             <a href="{{ url_for('student.book_resource', resource_id=b.resource_id) }}" class="fw-bold text-primary text-decoration-none fs-6">{{ b.resource.name }}</a>
@@ -45,8 +45,8 @@
             <span class="badge bg-light text-secondary border font-monospace fs-8">{{ b.resource.resource_type }}</span>
           </td>
           <td>
-            <div class="fw-bold text-dark fs-7">{{ b.booking_date.strftime('%a, %b %d, %Y') }}</div>
-            <span class="badge bg-dark text-white font-monospace">{{ b.start_time.strftime('%I:%M %p') }} - {{ b.end_time.strftime('%I:%M %p') }}</span>
+            <div class="fw-bold text-dark fs-7">{{ b.booking_date|format_date }}</div>
+            <span class="badge bg-dark text-white font-monospace">{{ b.start_time.strftime('%I:%M %p') if b.start_time else '' }} - {{ b.end_time.strftime('%I:%M %p') if b.end_time else '' }}</span>
           </td>
           <td>
             <div class="fs-7 text-secondary" style="max-width: 240px;">{{ b.purpose }}</div>
@@ -63,7 +63,7 @@
             {% if b.status in ['pending', 'approved'] %}
             <form method="POST" action="{{ url_for('student.cancel_booking', booking_id=b.id) }}" onsubmit="return confirm('Cancel this reservation? The slot will immediately become vacant for other students.');" style="display:inline;">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button type="submit" class="btn btn-outline-danger btn-sm px-3 fw-bold" title="Revoke & Cancel">
+              <button type="submit" class="btn btn-outline-danger btn-sm px-3 fw-bold focus-ring" title="Revoke & Cancel">
                 <i class="bi bi-x-circle me-1"></i> Cancel
               </button>
             </form>

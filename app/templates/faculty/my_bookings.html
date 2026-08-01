@@ -23,7 +23,7 @@
   <div class="table-responsive">
     <table class="table-custom mb-0">
       <thead>
-        <tr>
+        <tr class="hover-lift">
           <th>Reference ID</th>
           <th>Reserved Resource Facility</th>
           <th>Campus Location & Type</th>
@@ -45,8 +45,8 @@
             <span class="badge bg-light text-secondary border font-monospace fs-8">{{ b.resource.resource_type }}</span>
           </td>
           <td>
-            <div class="fw-bold text-dark fs-7">{{ b.booking_date.strftime('%a, %b %d, %Y') }}</div>
-            <span class="badge bg-dark text-white font-monospace">{{ b.start_time.strftime('%I:%M %p') }} - {{ b.end_time.strftime('%I:%M %p') }}</span>
+            <div class="fw-bold text-dark fs-7">{{ b.booking_date|format_date }}</div>
+            <span class="badge bg-dark text-white font-monospace">{{ b.start_time.strftime('%I:%M %p') if b.start_time else '' }} - {{ b.end_time.strftime('%I:%M %p') if b.end_time else '' }}</span>
           </td>
           <td>
             <div class="fs-7 text-secondary" style="max-width: 260px;">{{ b.purpose }}</div>
@@ -63,7 +63,7 @@
             {% if b.status in ['pending', 'approved'] %}
             <form method="POST" action="{{ url_for('faculty.cancel_booking', booking_id=b.id) }}" onsubmit="return confirm('Cancel this faculty reservation? The facility will become vacant immediately.');" style="display:inline;">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button type="submit" class="btn btn-outline-danger btn-sm px-3 fw-bold" title="Revoke Slot">
+              <button type="submit" class="btn btn-outline-danger btn-sm px-3 fw-bold focus-ring" title="Revoke Slot">
                 <i class="bi bi-x-circle me-1"></i> Revoke
               </button>
             </form>

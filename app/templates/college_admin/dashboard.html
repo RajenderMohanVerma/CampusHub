@@ -20,7 +20,7 @@
 <!-- KPI Cards -->
 <div class="row g-4 mb-5">
   <div class="col-xl-3 col-md-6">
-    <div class="glass-card stat-card h-100 border-start border-primary border-4">
+    <div class="glass-card stat-card h-100 border-start border-primary border-4 hover-lift">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <span class="text-uppercase fw-bold fs-7 text-muted">Departments</span>
         <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-diagram-3-fill"></i></div>
@@ -31,7 +31,7 @@
   </div>
 
   <div class="col-xl-3 col-md-6">
-    <div class="glass-card stat-card h-100 border-start border-info border-4">
+    <div class="glass-card stat-card h-100 border-start border-info border-4 hover-lift">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <span class="text-uppercase fw-bold fs-7 text-muted">Campus Resources</span>
         <div class="stat-icon bg-info bg-opacity-10 text-info"><i class="bi bi-pc-display"></i></div>
@@ -42,7 +42,7 @@
   </div>
 
   <div class="col-xl-3 col-md-6">
-    <div class="glass-card stat-card h-100 border-start border-success border-4">
+    <div class="glass-card stat-card h-100 border-start border-success border-4 hover-lift">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <span class="text-uppercase fw-bold fs-7 text-muted">Faculty & Students</span>
         <div class="stat-icon bg-success bg-opacity-10 text-success"><i class="bi bi-people-fill"></i></div>
@@ -53,7 +53,7 @@
   </div>
 
   <div class="col-xl-3 col-md-6">
-    <div class="glass-card stat-card h-100 border-start border-warning border-4">
+    <div class="glass-card stat-card h-100 border-start border-warning border-4 hover-lift">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <span class="text-uppercase fw-bold fs-7 text-muted">Pending Reservations</span>
         <div class="stat-icon bg-warning bg-opacity-10 text-warning"><i class="bi bi-bell-fill"></i></div>
@@ -101,25 +101,25 @@
             </thead>
             <tbody>
               {% for b in pending_bookings %}
-              <tr>
+              <tr class="hover-lift">
                 <td>
                   <span class="fw-bold text-primary d-block">{{ b.resource.name }}</span>
-                  <small class="text-muted fs-7">{{ b.booking_date.strftime('%b %d, %Y') }}</small>
+                  <small class="text-muted fs-7">{{ b.booking_date|format_date }}</small>
                 </td>
                 <td>
                   <div class="fw-semibold fs-7">{{ b.user.full_name }}</div>
                   <span class="badge bg-light text-muted border text-uppercase">{{ b.user.role }}</span>
                 </td>
-                <td class="font-monospace fs-7 text-dark fw-bold">{{ b.start_time.strftime('%I:%M%p') }} - {{ b.end_time.strftime('%I:%M%p') }}</td>
+                <td class="font-monospace fs-7 text-dark fw-bold">{{ b.start_time.strftime('%I:%M%p') if b.start_time else '' }} - {{ b.end_time.strftime('%I:%M%p') if b.end_time else '' }}</td>
                 <td class="text-end">
                   <div class="d-flex justify-content-end gap-1">
                     <form method="POST" action="{{ url_for('college_admin.decide_booking', booking_id=b.id, action='approve') }}" style="display:inline;">
                       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                      <button type="submit" class="btn btn-success btn-sm px-2 py-1 fs-7 fw-bold" title="Approve Slot"><i class="bi bi-check2"></i> Allow</button>
+                      <button type="submit" class="btn btn-success btn-sm px-2 py-1 fs-7 fw-bold focus-ring" title="Approve Slot"><i class="bi bi-check2"></i> Allow</button>
                     </form>
                     <form method="POST" action="{{ url_for('college_admin.decide_booking', booking_id=b.id, action='reject') }}" style="display:inline;">
                       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                      <button type="submit" class="btn btn-outline-danger btn-sm px-2 py-1 fs-7 fw-bold" title="Reject"><i class="bi bi-x"></i> Deny</button>
+                      <button type="submit" class="btn btn-outline-danger btn-sm px-2 py-1 fs-7 fw-bold focus-ring" title="Reject"><i class="bi bi-x"></i> Deny</button>
                     </form>
                   </div>
                 </td>

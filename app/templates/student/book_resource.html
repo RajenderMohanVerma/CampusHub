@@ -15,7 +15,7 @@
 <div class="row g-5 mb-5">
   <!-- Booking Form Column -->
   <div class="col-lg-7">
-    <div class="glass-card p-4 p-md-5 shadow-lg h-100" style="border-radius: 20px;">
+    <div class="glass-card p-4 p-md-5 shadow-lg h-100 hover-lift" style="border-radius: 20px;">
       <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
         <div class="d-flex align-items-center justify-content-center text-white shadow-md" style="width: 50px; height: 50px; border-radius: 14px; background: linear-gradient(135deg, #6366f1, #0ea5e9);">
           <i class="bi bi-clock-history fs-3"></i>
@@ -79,7 +79,7 @@
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary-gradient w-100 py-3 fw-bold fs-6 shadow-md">
+        <button type="submit" class="btn btn-primary-gradient w-100 py-3 fw-bold fs-6 shadow-md focus-ring">
           <i class="bi bi-check2-circle me-2"></i> Submit Authorization Application
         </button>
       </form>
@@ -89,9 +89,9 @@
   <!-- Resource Specs & Existing Slots Sidebar -->
   <div class="col-lg-5">
     <!-- Resource Details Card -->
-    <div class="glass-card overflow-hidden mb-4 border-0 shadow-sm">
+    <div class="glass-card overflow-hidden mb-4 border-0 shadow-sm hover-lift">
       <div style="height: 180px; position: relative;">
-        <img src="{{ resource.image_url or 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=80' }}" alt="Asset Photo" class="w-100 h-100 object-fit-cover">
+        <img src="{{ resource.image_url or 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=80' }}" alt="Asset Photo" class="w-100 h-100 object-fit-cover" style="object-fit:cover;">
         <span class="badge bg-primary position-absolute bottom-0 start-0 m-3 font-monospace">{{ resource.resource_type }}</span>
       </div>
       <div class="p-4">
@@ -114,8 +114,8 @@
           {% for slot in existing_slots %}
           <div class="p-3 rounded-3 bg-light border d-flex justify-content-between align-items-center">
             <div>
-              <span class="fw-bold text-dark d-block fs-7">{{ slot.booking_date.strftime('%b %d, %Y') }}</span>
-              <span class="font-monospace text-primary fw-bold fs-7">{{ slot.start_time.strftime('%I:%M %p') }} - {{ slot.end_time.strftime('%I:%M %p') }}</span>
+              <span class="fw-bold text-dark d-block fs-7">{{ slot.booking_date|format_date }}</span>
+              <span class="font-monospace text-primary fw-bold fs-7">{{ slot.start_time.strftime('%I:%M %p') if slot.start_time else '' }} - {{ slot.end_time.strftime('%I:%M %p') if slot.end_time else '' }}</span>
             </div>
             <span class="badge {{ slot.status_badge }} px-2 py-1 text-uppercase fs-8">{{ slot.status }}</span>
           </div>

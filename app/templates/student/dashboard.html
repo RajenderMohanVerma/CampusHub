@@ -4,8 +4,11 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
   <div>
-    <h3 class="fw-bolder mb-1"><i class="bi bi-mortarboard text-primary me-2"></i> Student Portal Dashboard</h3>
+    <h3 class="fw-bolder mb-1 heading-with-caret"><i class="bi bi-mortarboard text-primary me-2"></i> Student Portal Dashboard</h3>
     <p class="text-muted fs-7 mb-0">Welcome, <strong>{{ current_user.full_name }}</strong>! Workspace: <span class="text-primary fw-bold font-monospace">{{ current_user.college.name }}</span></p>
+    {% if site_announcements %}
+      <div class="mt-2 marquee text-muted fs-7"><span>{{ site_announcements|join(' • ') }}</span></div>
+    {% endif %}
   </div>
   <a href="{{ url_for('student.catalog') }}" class="btn btn-primary-gradient px-4 py-2 fw-bold shadow-sm">
     <i class="bi bi-calendar-plus me-2"></i> Request Resource Slot
@@ -15,7 +18,7 @@
 <!-- KPI Summary Cards -->
 <div class="row g-4 mb-5">
   <div class="col-md-4">
-    <div class="glass-card stat-card h-100 border-start border-primary border-4">
+  <div class="glass-card stat-card h-100 border-start border-primary border-4 hover-lift">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <span class="text-uppercase fw-bold fs-7 text-muted">Available Resources</span>
         <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-pc-display"></i></div>
@@ -67,14 +70,14 @@
       </thead>
       <tbody>
         {% for b in recent_bookings %}
-        <tr>
+        <tr class="hover-lift">
           <td class="font-monospace fw-bold text-primary fs-7">#BKG-{{ b.id }}</td>
           <td>
-            <div class="fw-bold text-dark">{{ b.resource.name }}</div>
+            <div class="fw-bold text-primary">{{ b.resource.name }}</div>
             <small class="text-muted fs-7"><i class="bi bi-geo-alt me-1"></i>{{ b.resource.location }}</small>
           </td>
-          <td class="fw-semibold fs-7">{{ b.booking_date.strftime('%a, %b %d, %Y') }}</td>
-          <td class="font-monospace fs-7 text-dark fw-bold">{{ b.start_time.strftime('%I:%M %p') }} - {{ b.end_time.strftime('%I:%M %p') }}</td>
+          <td class="fw-semibold fs-7">{{ b.booking_date|format_date }}</td>
+          <td class="font-monospace fs-7 text-dark fw-bold">{{ b.start_time.strftime('%I:%M %p') if b.start_time else '' }} - {{ b.end_time.strftime('%I:%M %p') if b.end_time else '' }}</td>
           <td>
             <span class="badge {{ b.status_badge }} px-3 py-1 text-uppercase">{{ b.status }}</span>
             {% if b.admin_remark %}
@@ -101,10 +104,10 @@
   <div class="row g-4">
     {% for r in featured_resources %}
     <div class="col-md-4">
-      <div class="glass-card h-100 overflow-hidden d-flex flex-column justify-content-between border-0 shadow-sm">
+      <div class="glass-card h-100 overflow-hidden d-flex flex-column justify-content-between border-0 shadow-sm hover-lift">
         <div>
           <div style="height: 160px; position: relative;">
-            <img src="{{ r.image_url or 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&auto=format&fit=crop&q=80' }}" alt="{{ r.name }}" class="w-100 h-100 object-fit-cover">
+            <img src="{{ r.image_url or 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&auto=format&fit=crop&q=80' }}" alt="{{ r.name }}" class="w-100 h-100 object-fit-cover" style="object-fit:cover;">
             <span class="badge bg-dark bg-opacity-75 text-white position-absolute bottom-0 start-0 m-2 font-monospace fs-8">{{ r.resource_type }}</span>
           </div>
           <div class="p-3">
@@ -114,7 +117,7 @@
           </div>
         </div>
         <div class="p-3 bg-light border-top text-end">
-          <a href="{{ url_for('student.book_resource', resource_id=r.id) }}" class="btn btn-primary-gradient btn-sm fw-bold px-3">
+          <a href="{{ url_for('student.book_resource', resource_id=r.id) }}" class="btn btn-primary-gradient btn-sm fw-bold px-3 focus-ring">
             <i class="bi bi-calendar-check me-1"></i> Reserve Slot
           </a>
         </div>

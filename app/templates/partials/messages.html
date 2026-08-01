@@ -3,9 +3,9 @@
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       {% for category, message in messages %}
-        <div class="toast align-items-center text-bg-{{ category }} border-0 shadow-lg mb-2" role="alert" aria-live="assertive" aria-atomic="true" style="border-radius: 12px; backdrop-filter: blur(10px);">
+        <div class="toast align-items-center border-0 shadow-lg mb-2 glass-card p-2" role="alert" aria-live="assertive" aria-atomic="true" style="border-radius: 12px;">
           <div class="d-flex">
-            <div class="toast-body d-flex align-items-center fs-6">
+            <div class="toast-body d-flex align-items-center fs-6 text-truncate">
               {% if category == 'success' %}
                 <i class="bi bi-check-circle-fill me-2 fs-5"></i>
               {% elif category == 'danger' or category == 'error' %}
@@ -15,7 +15,7 @@
               {% else %}
                 <i class="bi bi-info-circle-fill me-2 fs-5"></i>
               {% endif %}
-              {{ message }}
+              <div class="text-truncate" style="max-width:320px;">{{ message }}</div>
             </div>
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
           </div>
